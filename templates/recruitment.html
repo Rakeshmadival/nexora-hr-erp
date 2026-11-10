@@ -1,0 +1,600 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.rec-heading {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px; margin-bottom:23px;
+}
+.rec-heading h1 {
+    color:#17243b; font-size:25px; font-weight:750; margin:0 0 6px;
+}
+.rec-muted { color:#8793a5; font-size:12px; }
+.rec-kpis {
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:12px; margin-bottom:22px;
+}
+.rec-kpi,.rec-panel {
+    background:white; border:1px solid #e9edf3; border-radius:12px;
+}
+.rec-kpi { padding:16px; }
+.rec-kpi span { color:#8793a5; font-size:10px; font-weight:650; }
+.rec-kpi strong {
+    display:block; color:#17243b; font-size:27px;
+    font-weight:750; margin-top:8px;
+}
+.rec-panel { overflow:hidden; margin-bottom:20px; }
+.rec-panel-header {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px; padding:17px 20px;
+    border-bottom:1px solid #edf0f5;
+}
+.rec-panel-header h3 {
+    color:#26364e; font-size:14px; font-weight:700; margin:0;
+}
+.rec-panel-body { padding:20px; }
+.rec-details {
+    border:1px solid #e8edf4; border-radius:9px; margin-bottom:13px;
+}
+.rec-details summary {
+    cursor:pointer; padding:14px 16px; color:#2675c8;
+    font-size:12px; font-weight:700; list-style:none;
+}
+.rec-details summary::-webkit-details-marker { display:none; }
+.rec-details[open] summary { border-bottom:1px solid #edf0f5; }
+.rec-form-body { padding:17px; }
+.rec-form-grid {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+}
+.rec-field label {
+    display:block; color:#526178; font-size:11px;
+    font-weight:650; margin-bottom:7px;
+}
+.rec-field input,.rec-field select,.rec-field textarea {
+    width:100%; min-height:39px; padding:9px 11px;
+    border:1px solid #e2e8f0; border-radius:7px;
+    font-size:11px; color:#33445d; background:white;
+}
+.rec-field textarea { min-height:68px; resize:vertical; }
+.rec-field.full { grid-column:1/-1; }
+.rec-submit {
+    background:#0875d1; border:0; color:white;
+    border-radius:7px; padding:10px 15px;
+    font-size:11px; font-weight:650;
+}
+.rec-submit:hover { background:#0664b5; }
+.rec-table-wrap { overflow-x:auto; }
+.rec-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.rec-table th {
+    background:#fafbfd; color:#8793a5; text-transform:uppercase;
+    font-size:10px; letter-spacing:.4px; padding:13px 14px;
+    text-align:left;
+}
+.rec-table td {
+    border-top:1px solid #f0f2f6; padding:13px 14px;
+    color:#53627a; font-size:11px; vertical-align:middle;
+}
+.rec-primary { color:#26364e; font-weight:650; }
+.rec-secondary { color:#98a3b2; font-size:10px; margin-top:4px; }
+.rec-status {
+    display:inline-block; padding:5px 9px;
+    border-radius:20px; font-size:10px; font-weight:650;
+}
+.status-draft { background:#edf0f4; color:#718096; }
+.status-open { background:#e8f7ef; color:#208354; }
+.status-closed { background:#fff0ed; color:#c45c4d; }
+.stage-applied { background:#edf0f4; color:#718096; }
+.stage-screening { background:#eaf3ff; color:#2675c8; }
+.stage-interview { background:#fff4df; color:#a86a13; }
+.stage-offered { background:#f1edff; color:#8162d8; }
+.stage-hired { background:#e8f7ef; color:#208354; }
+.stage-rejected { background:#fff0ed; color:#c45c4d; }
+.rec-status-form { display:flex; gap:6px; align-items:center; }
+.rec-status-form select,.rec-status-form input {
+    border:1px solid #e2e8f0; border-radius:6px;
+    padding:7px; font-size:10px; color:#53627a;
+}
+.rec-status-form select { min-width:105px; }
+.rec-status-form input { width:155px; }
+.rec-update {
+    border:0; border-radius:6px; padding:8px 10px;
+    background:#edf4ff; color:#2675c8;
+    font-size:10px; font-weight:700;
+}
+.rec-link { color:#2675c8; text-decoration:none; font-weight:650; }
+.rec-link:hover { text-decoration:underline; }
+.rec-search {
+    width:240px; max-width:100%; border:1px solid #e2e8f0;
+    border-radius:7px; padding:9px 11px; font-size:11px;
+}
+.rec-empty {
+    text-align:center; padding:32px 15px;
+    color:#96a1b0; font-size:12px;
+}
+.rec-count { color:#8793a5; font-size:10px; }
+@media(max-width:1000px) {
+    .rec-kpis { grid-template-columns:repeat(3,1fr); }
+    .rec-form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:650px) {
+    .rec-kpis { grid-template-columns:repeat(2,1fr); }
+    .rec-form-grid { grid-template-columns:1fr; }
+    .rec-field.full { grid-column:auto; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="rec-heading">
+    <div>
+        <div class="rec-muted mb-2">HOME / PEOPLE / RECRUITMENT</div>
+        <h1>Recruitment & Applicant Tracking</h1>
+        <div class="rec-muted">
+            Manage job openings, candidate applications and hiring progress.
+        </div>
+    </div>
+</div>
+
+
+<!-- RECRUITMENT KPIs -->
+<div class="rec-kpis">
+
+    <div class="rec-kpi">
+        <span>TOTAL JOBS</span>
+        <strong>{{ metrics.total_jobs }}</strong>
+    </div>
+
+    <div class="rec-kpi">
+        <span>OPEN POSITIONS</span>
+        <strong>{{ metrics.open_jobs }}</strong>
+    </div>
+
+    <div class="rec-kpi">
+        <span>TOTAL APPLICANTS</span>
+        <strong>{{ metrics.total_applicants }}</strong>
+    </div>
+
+    <div class="rec-kpi">
+        <span>INTERVIEWS</span>
+        <strong>{{ metrics.interviews }}</strong>
+    </div>
+
+    <div class="rec-kpi">
+        <span>HIRED</span>
+        <strong>{{ metrics.hired }}</strong>
+    </div>
+
+</div>
+
+
+<!-- JOB CREATION -->
+<div class="rec-panel">
+
+    <div class="rec-panel-header">
+        <div>
+            <h3>Job Requisitions</h3>
+            <div class="rec-muted mt-1">
+                Create and manage organisation job openings
+            </div>
+        </div>
+
+        <span class="rec-count">{{ jobs|length }} job records</span>
+    </div>
+
+    <div class="rec-panel-body">
+
+        <details class="rec-details">
+            <summary>
+                <i class="bi bi-plus-circle me-2"></i>
+                Create New Job Opening
+            </summary>
+
+            <div class="rec-form-body">
+
+                <form method="POST"
+                      action="{{ url_for('create_job_opening') }}">
+
+                    <div class="rec-form-grid">
+
+                        <div class="rec-field">
+                            <label>Job Title *</label>
+                            <input type="text" name="job_title"
+                                   placeholder="e.g. Python Developer" required>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Department</label>
+                            <select name="department_id">
+                                <option value="">Select department</option>
+                                {% for department in departments %}
+                                <option value="{{ department.department_id }}">
+                                    {{ department.department_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Employment Type *</label>
+                            <select name="employment_type" required>
+                                <option value="Full Time">Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Work Location</label>
+                            <input type="text" name="work_location"
+                                   placeholder="e.g. Bengaluru">
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Number of Openings *</label>
+                            <input type="number" name="number_of_openings"
+                                   value="1" min="1" required>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Job Status</label>
+                            <select name="job_status">
+                                <option value="Draft">Draft</option>
+                                <option value="Open">Open</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Minimum Salary (₹)</label>
+                            <input type="number" name="minimum_salary"
+                                   min="0" step="0.01" placeholder="Optional">
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Maximum Salary (₹)</label>
+                            <input type="number" name="maximum_salary"
+                                   min="0" step="0.01" placeholder="Optional">
+                        </div>
+
+                        <div class="rec-field full">
+                            <label>Job Description</label>
+                            <textarea name="job_description"
+                                      placeholder="Responsibilities, skills and qualifications..."></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="rec-submit" type="submit">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Save Job Opening
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </details>
+
+
+        <!-- JOB LIST -->
+        <div class="rec-table-wrap">
+            <table class="rec-table">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Department</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Openings</th>
+                        <th>Applicants</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for job in jobs %}
+                    <tr>
+                        <td>
+                            <div class="rec-primary">{{ job.job_title }}</div>
+                            <div class="rec-secondary">
+                                JOB-{{ "%04d"|format(job.job_id) }}
+                            </div>
+                        </td>
+
+                        <td>{{ job.department_name or 'Unassigned' }}</td>
+                        <td>{{ job.employment_type }}</td>
+                        <td>{{ job.work_location or '—' }}</td>
+                        <td>{{ job.number_of_openings }}</td>
+                        <td>{{ job.applicant_count }}</td>
+
+                        <td>
+                            {% if job.job_status == 'Open' %}
+                                <span class="rec-status status-open">Open</span>
+                            {% elif job.job_status == 'Closed' %}
+                                <span class="rec-status status-closed">Closed</span>
+                            {% else %}
+                                <span class="rec-status status-draft">Draft</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="rec-empty">
+                                <i class="bi bi-briefcase fs-3 d-block mb-2"></i>
+                                No job openings yet. Create your first requisition.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- CANDIDATE REGISTRATION -->
+<div class="rec-panel">
+
+    <div class="rec-panel-header">
+        <div>
+            <h3>Candidate Registration</h3>
+            <div class="rec-muted mt-1">
+                Add a candidate to an open job requisition
+            </div>
+        </div>
+        <i class="bi bi-person-plus text-secondary"></i>
+    </div>
+
+    <div class="rec-panel-body">
+
+        {% if open_jobs %}
+
+        <details class="rec-details">
+            <summary>
+                <i class="bi bi-plus-circle me-2"></i>
+                Register New Candidate
+            </summary>
+
+            <div class="rec-form-body">
+
+                <form method="POST"
+                      action="{{ url_for('create_job_application') }}">
+
+                    <div class="rec-form-grid">
+
+                        <div class="rec-field">
+                            <label>Candidate Name *</label>
+                            <input type="text" name="candidate_name"
+                                   placeholder="Full name" required>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Email Address *</label>
+                            <input type="email" name="candidate_email"
+                                   placeholder="candidate@email.com" required>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Phone Number</label>
+                            <input type="tel" name="candidate_phone"
+                                   placeholder="Contact number">
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Job Opening *</label>
+                            <select name="job_id" required>
+                                <option value="">Select open position</option>
+                                {% for job in open_jobs %}
+                                <option value="{{ job.job_id }}">
+                                    {{ job.job_title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Application Source</label>
+                            <select name="application_source">
+                                <option value="">Select source</option>
+                                <option value="Company Website">Company Website</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Referral">Employee Referral</option>
+                                <option value="Job Portal">Job Portal</option>
+                                <option value="Walk-in">Walk-in</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="rec-field">
+                            <label>Resume URL</label>
+                            <input type="url" name="resume_url"
+                                   placeholder="https://...">
+                        </div>
+
+                        <div class="rec-field full">
+                            <label>Recruiter Notes</label>
+                            <textarea name="recruiter_notes"
+                                      placeholder="Initial candidate observations..."></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="rec-submit" type="submit">
+                            <i class="bi bi-person-check me-1"></i>
+                            Register Candidate
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </details>
+
+        {% else %}
+
+        <div class="rec-empty">
+            Create a job opening and set its status to Open before registering candidates.
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+
+<!-- APPLICANT PIPELINE -->
+<div class="rec-panel">
+
+    <div class="rec-panel-header">
+        <div>
+            <h3>Applicant Pipeline</h3>
+            <div class="rec-muted mt-1">
+                Track candidates throughout the recruitment process
+            </div>
+        </div>
+
+        <input type="text" id="candidateSearch"
+               class="rec-search"
+               placeholder="Search candidates or jobs...">
+    </div>
+
+    <div class="rec-table-wrap">
+
+        <table class="rec-table">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Position</th>
+                    <th>Source</th>
+                    <th>Applied Date</th>
+                    <th>Resume</th>
+                    <th>Pipeline Stage & Interview</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="candidateTableBody">
+
+                {% for application in applications %}
+
+                <tr data-search="{{ application.candidate_name }} {{ application.candidate_email }} {{ application.job_title }} {{ application.application_source or '' }}">
+
+                    <td>
+                        <div class="rec-primary">
+                            {{ application.candidate_name }}
+                        </div>
+                        <div class="rec-secondary">
+                            {{ application.candidate_email }}
+                        </div>
+                    </td>
+
+                    <td>{{ application.job_title }}</td>
+                    <td>{{ application.application_source or '—' }}</td>
+
+                    <td>
+                        {{ application.applied_at.strftime('%d %b %Y') }}
+                    </td>
+
+                    <td>
+                        {% if application.resume_url %}
+                        <a href="{{ application.resume_url }}"
+                           class="rec-link" target="_blank" rel="noopener noreferrer">
+                            <i class="bi bi-file-earmark-text"></i> Resume
+                        </a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% set stage = application.application_status|lower %}
+                        <span class="rec-status stage-{{ stage }}">
+                            {{ application.application_status }}
+                        </span>
+
+                        {% if application.interview_date %}
+                        <div class="rec-secondary">
+                            {{ application.interview_date.strftime('%d %b %Y, %I:%M %p') }}
+                        </div>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('update_application_status', application_id=application.application_id) }}"
+                              class="rec-status-form">
+
+                            <select name="application_status" required>
+                                {% for status in ['Applied', 'Screening', 'Interview', 'Offered', 'Hired', 'Rejected'] %}
+                                <option value="{{ status }}"
+                                    {% if application.application_status == status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <input type="datetime-local"
+                                   name="interview_date"
+                                   aria-label="Interview date and time">
+
+                            <button type="submit" class="rec-update">
+                                Update
+                            </button>
+
+                        </form>
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="7">
+                        <div class="rec-empty">
+                            <i class="bi bi-people fs-3 d-block mb-2"></i>
+                            No candidates registered yet.
+                        </div>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+const candidateSearch = document.getElementById("candidateSearch");
+
+candidateSearch.addEventListener("input", function() {
+    const term = this.value.toLowerCase().trim();
+
+    document.querySelectorAll("#candidateTableBody tr[data-search]")
+        .forEach(row => {
+            row.style.display = row.dataset.search.toLowerCase().includes(term)
+                ? ""
+                : "none";
+        });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,365 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.access-heading {
+    margin-bottom:24px;
+}
+.access-heading h1 {
+    color:#17243b; font-size:25px; font-weight:750; margin:0 0 6px;
+}
+.access-muted { color:#8793a5; font-size:11px; }
+.access-kpis {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:15px; margin-bottom:22px;
+}
+.access-card,.access-panel {
+    background:#fff; border:1px solid #e9edf3; border-radius:12px;
+}
+.access-card { padding:19px; }
+.access-card span { color:#8793a5; font-size:10px; font-weight:650; }
+.access-card strong {
+    display:block; color:#17243b; font-size:27px;
+    font-weight:750; margin-top:8px;
+}
+.access-panel { overflow:hidden; margin-bottom:21px; }
+.access-panel-header {
+    padding:18px 20px; border-bottom:1px solid #edf0f5;
+}
+.access-panel-header h3 {
+    font-size:14px; color:#26364e; font-weight:700; margin:0;
+}
+.access-panel-body { padding:20px; }
+.access-form-grid {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:15px;
+}
+.access-field label {
+    display:block; font-size:11px; color:#526178;
+    font-weight:650; margin-bottom:7px;
+}
+.access-field input,.access-field select {
+    width:100%; border:1px solid #e2e8f0; border-radius:7px;
+    padding:10px 11px; font-size:11px; color:#33445d;
+    background:white;
+}
+.access-submit {
+    border:0; border-radius:7px; background:#0875d1;
+    color:white; padding:10px 16px; font-size:11px;
+    font-weight:650;
+}
+.access-table-wrap { overflow-x:auto; }
+.access-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.access-table th {
+    background:#fafbfd; color:#8793a5; padding:13px 17px;
+    font-size:10px; text-align:left; text-transform:uppercase;
+}
+.access-table td {
+    border-top:1px solid #f0f2f6; padding:14px 17px;
+    color:#53627a; font-size:11px;
+}
+.access-username { color:#26364e; font-weight:650; }
+.access-id { color:#98a3b2; font-size:10px; margin-top:3px; }
+.access-role {
+    display:inline-block; padding:5px 9px; border-radius:20px;
+    font-size:10px; font-weight:650;
+}
+.role-admin { background:#f1edff; color:#7457ca; }
+.role-manager { background:#eaf3ff; color:#2675c8; }
+.role-employee { background:#e8f7ef; color:#208354; }
+.access-role-form { display:flex; align-items:center; gap:7px; }
+.access-role-form select {
+    border:1px solid #e2e8f0; border-radius:6px;
+    padding:7px; font-size:10px; color:#53627a;
+}
+.access-update {
+    border:0; background:#edf4ff; color:#2675c8;
+    padding:8px 10px; border-radius:6px;
+    font-size:10px; font-weight:700;
+}
+.access-matrix {
+    width:100%; border-collapse:collapse;
+}
+.access-matrix th,.access-matrix td {
+    padding:13px 14px; text-align:left;
+    border-bottom:1px solid #edf0f5; font-size:11px;
+    color:#53627a;
+}
+.access-matrix th {
+    color:#8793a5; font-size:10px;
+    background:#fafbfd; text-transform:uppercase;
+}
+.permission-yes { color:#208354; font-weight:700; }
+.permission-limited { color:#a86a13; font-weight:700; }
+.permission-no { color:#c45c4d; font-weight:700; }
+.access-note {
+    background:#f5f8fc; padding:13px 15px;
+    border-radius:8px; color:#75849a;
+    font-size:10px; line-height:1.6; margin-top:16px;
+}
+@media(max-width:800px) {
+    .access-form-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:600px) {
+    .access-kpis { grid-template-columns:1fr; }
+    .access-form-grid { grid-template-columns:1fr; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="access-heading">
+    <div class="access-muted mb-2">
+        HOME / ADMINISTRATION / ACCESS MANAGEMENT
+    </div>
+
+    <h1>Access Management</h1>
+
+    <div class="access-muted">
+        Manage user accounts, assign roles and review application permissions.
+    </div>
+</div>
+
+
+<!-- ACCOUNT SUMMARY -->
+<div class="access-kpis">
+
+    <div class="access-card">
+        <span>TOTAL USER ACCOUNTS</span>
+        <strong>{{ user_accounts|length }}</strong>
+    </div>
+
+    <div class="access-card">
+        <span>HR ADMINISTRATORS</span>
+        <strong>{{ role_summary['HR Admin'] }}</strong>
+    </div>
+
+    <div class="access-card">
+        <span>MANAGERS</span>
+        <strong>{{ role_summary['Manager'] }}</strong>
+    </div>
+
+</div>
+
+
+<!-- CREATE ACCOUNT -->
+<div class="access-panel">
+
+    <div class="access-panel-header">
+        <h3>Create User Account</h3>
+        <div class="access-muted mt-1">
+            Register a new NEXORA application user
+        </div>
+    </div>
+
+    <div class="access-panel-body">
+
+        <form method="POST"
+              action="{{ url_for('create_user_account') }}">
+
+            <div class="access-form-grid">
+
+                <div class="access-field">
+                    <label>Username *</label>
+                    <input type="text" name="username"
+                           minlength="3" maxlength="40"
+                           pattern="[A-Za-z0-9_.-]+"
+                           placeholder="Enter username" required>
+                </div>
+
+                <div class="access-field">
+                    <label>Initial Password *</label>
+                    <input type="password" name="password"
+                           minlength="8"
+                           placeholder="Minimum 8 characters" required>
+                </div>
+
+                <div class="access-field">
+                    <label>Assign Role *</label>
+                    <select name="role" required>
+                        <option value="">Select access role</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Manager">Manager</option>
+                        <option value="HR Admin">HR Admin</option>
+                    </select>
+                </div>
+                <div class="access-field">
+    <label>Link Employee Record</label>
+    <select name="employee_id">
+        <option value="">Select employee</option>
+        {% for employee in available_employees %}
+        <option value="{{ employee.employee_id }}">
+            {{ employee.employee_code }} -
+            {{ employee.first_name }} {{ employee.last_name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+            </div>
+
+            <div class="d-flex justify-content-end mt-3">
+                <button type="submit" class="access-submit">
+                    <i class="bi bi-person-plus me-1"></i>
+                    Create Account
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- USER DIRECTORY -->
+<div class="access-panel">
+
+    <div class="access-panel-header">
+        <h3>User Account Directory</h3>
+        <div class="access-muted mt-1">
+            Review registered accounts and update role assignments
+        </div>
+    </div>
+
+    <div class="access-table-wrap">
+
+        <table class="access-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Current Role</th>
+                    <th>Change Role</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for user in user_accounts %}
+
+                <tr>
+                    <td>
+                        <div class="access-username">
+                            {{ user.username }}
+                        </div>
+                        <div class="access-id">
+                            USER-{{ "%04d"|format(user.user_id) }}
+                        </div>
+                    </td>
+
+                    <td>
+                        {% if user.role == 'HR Admin' %}
+                            <span class="access-role role-admin">HR Admin</span>
+                        {% elif user.role == 'Manager' %}
+                            <span class="access-role role-manager">Manager</span>
+                        {% else %}
+                            <span class="access-role role-employee">Employee</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if user.user_id != session.get('user_id') %}
+
+                        <form method="POST"
+                              action="{{ url_for('update_user_role', user_id=user.user_id) }}"
+                              class="access-role-form">
+
+                            <select name="role" required>
+                                <option value="Employee"
+                                    {% if user.role == 'Employee' %}selected{% endif %}>
+                                    Employee
+                                </option>
+
+                                <option value="Manager"
+                                    {% if user.role == 'Manager' %}selected{% endif %}>
+                                    Manager
+                                </option>
+
+                                <option value="HR Admin"
+                                    {% if user.role == 'HR Admin' %}selected{% endif %}>
+                                    HR Admin
+                                </option>
+                            </select>
+
+                            <button type="submit" class="access-update">
+                                Update
+                            </button>
+
+                        </form>
+
+                        {% else %}
+
+                        <span class="access-muted">
+                            Current session — protected
+                        </span>
+
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="3">No user accounts found.</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<!-- ROLE PERMISSION MATRIX -->
+<div class="access-panel">
+
+    <div class="access-panel-header">
+        <h3>Role & Permission Matrix</h3>
+        <div class="access-muted mt-1">
+            Intended access model for the NEXORA application
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="access-matrix">
+
+            <thead>
+                <tr>
+                    <th>Application Module</th>
+                    <th>HR Admin</th>
+                    <th>Manager</th>
+                    <th>Employee</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr><td>Dashboard</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-yes">Access</td></tr>
+                <tr><td>Employee Directory</td><td class="permission-yes">Full</td><td class="permission-limited">View</td><td class="permission-no">No access</td></tr>
+                <tr><td>Organisation Structure</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Recruitment</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Onboarding</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Leave Management</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Attendance</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Payroll</td><td class="permission-yes">Full</td><td class="permission-no">No access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Reports & Analytics</td><td class="permission-yes">Full</td><td class="permission-yes">Access</td><td class="permission-no">No access</td></tr>
+                <tr><td>Access Management</td><td class="permission-yes">Full</td><td class="permission-no">No access</td><td class="permission-no">No access</td></tr>
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="access-panel-body">
+        <div class="access-note">
+            This matrix describes the intended NEXORA role model. Actual permissions
+            are enforced by Flask route decorators. Employee self-service workflows
+            and employee-account linking are not yet implemented.
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

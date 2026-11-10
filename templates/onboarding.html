@@ -1,0 +1,450 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.onb-heading {
+    display:flex; justify-content:space-between; flex-wrap:wrap;
+    align-items:center; gap:14px; margin-bottom:23px;
+}
+.onb-heading h1 {
+    font-size:25px; color:#17243b; font-weight:750; margin:0 0 6px;
+}
+.onb-muted { color:#8793a5; font-size:11px; }
+.onb-kpis {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:13px; margin-bottom:22px;
+}
+.onb-kpi,.onb-panel,.onb-card {
+    background:white; border:1px solid #e9edf3; border-radius:12px;
+}
+.onb-kpi { padding:17px; }
+.onb-kpi span { color:#8793a5; font-size:10px; font-weight:650; }
+.onb-kpi strong {
+    display:block; font-size:26px; color:#17243b;
+    font-weight:750; margin-top:8px;
+}
+.onb-panel { overflow:hidden; margin-bottom:21px; }
+.onb-panel-header {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px; padding:17px 20px;
+    border-bottom:1px solid #edf0f5;
+}
+.onb-panel-header h3 {
+    font-size:14px; font-weight:700; color:#26364e; margin:0;
+}
+.onb-panel-body { padding:20px; }
+.onb-form-grid {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+}
+.onb-field label {
+    display:block; font-size:11px; color:#526178;
+    font-weight:650; margin-bottom:7px;
+}
+.onb-field input,.onb-field select,.onb-field textarea {
+    width:100%; border:1px solid #e2e8f0;
+    border-radius:7px; padding:10px 11px;
+    color:#33445d; font-size:11px; background:white;
+}
+.onb-field textarea { min-height:70px; resize:vertical; }
+.onb-field.full { grid-column:1/-1; }
+.onb-submit {
+    background:#0875d1; color:white; border:0;
+    border-radius:7px; padding:10px 16px;
+    font-size:11px; font-weight:650;
+}
+.onb-cards { display:grid; gap:17px; }
+.onb-card { overflow:hidden; }
+.onb-card-header {
+    display:flex; justify-content:space-between;
+    align-items:flex-start; gap:13px; flex-wrap:wrap;
+    padding:19px; border-bottom:1px solid #edf0f5;
+}
+.onb-name { color:#26364e; font-size:14px; font-weight:700; }
+.onb-code { color:#98a3b2; font-size:10px; margin-top:4px; }
+.onb-status {
+    display:inline-block; padding:5px 9px; border-radius:20px;
+    font-size:10px; font-weight:650;
+}
+.onb-not-started { background:#edf0f4; color:#718096; }
+.onb-in-progress { background:#eaf3ff; color:#2675c8; }
+.onb-completed { background:#e8f7ef; color:#208354; }
+.onb-on-hold { background:#fff4df; color:#a86a13; }
+.onb-progress-track {
+    height:7px; background:#edf1f6; border-radius:20px;
+    overflow:hidden; margin-top:9px;
+}
+.onb-progress-fill {
+    height:100%; background:#2985cc; border-radius:20px;
+}
+.onb-progress-label {
+    display:flex; justify-content:space-between;
+    font-size:10px; color:#8995a7; margin-top:9px;
+}
+.onb-card-body { padding:18px 19px; }
+.onb-tasks-title {
+    color:#26364e; font-size:12px; font-weight:700; margin-bottom:13px;
+}
+.onb-task {
+    display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:10px;
+    border:1px solid #edf0f5; border-radius:8px;
+    padding:12px; margin-bottom:9px;
+}
+.onb-task-title { color:#33445d; font-size:11px; font-weight:650; }
+.onb-task-meta { color:#98a3b2; font-size:10px; margin-top:4px; }
+.onb-task-form { display:flex; gap:6px; align-items:center; }
+.onb-task-form select {
+    border:1px solid #e2e8f0; border-radius:6px;
+    padding:7px; color:#53627a; font-size:10px;
+}
+.onb-task-update {
+    border:0; border-radius:6px; padding:8px 10px;
+    background:#edf4ff; color:#2675c8;
+    font-size:10px; font-weight:700;
+}
+.onb-add-task {
+    margin-top:16px; padding:15px;
+    background:#fafbfd; border:1px dashed #d9e1eb; border-radius:9px;
+}
+.onb-add-task h4 {
+    color:#34445c; font-size:11px; font-weight:700; margin:0 0 12px;
+}
+.onb-empty {
+    text-align:center; padding:35px 15px;
+    color:#96a1b0; font-size:12px;
+}
+@media(max-width:900px) {
+    .onb-kpis { grid-template-columns:repeat(2,1fr); }
+    .onb-form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:600px) {
+    .onb-kpis { grid-template-columns:1fr 1fr; }
+    .onb-form-grid { grid-template-columns:1fr; }
+    .onb-field.full { grid-column:auto; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="onb-heading">
+    <div>
+        <div class="onb-muted mb-2">HOME / PEOPLE / ONBOARDING</div>
+        <h1>Employee Onboarding</h1>
+        <div class="onb-muted">
+            Coordinate induction, documentation, IT setup and initial training.
+        </div>
+    </div>
+</div>
+
+
+<!-- SUMMARY -->
+<div class="onb-kpis">
+
+    <div class="onb-kpi">
+        <span>TOTAL ONBOARDINGS</span>
+        <strong>{{ summary.total }}</strong>
+    </div>
+
+    <div class="onb-kpi">
+        <span>NOT STARTED</span>
+        <strong>{{ summary.not_started }}</strong>
+    </div>
+
+    <div class="onb-kpi">
+        <span>IN PROGRESS</span>
+        <strong>{{ summary.in_progress }}</strong>
+    </div>
+
+    <div class="onb-kpi">
+        <span>COMPLETED</span>
+        <strong>{{ summary.completed }}</strong>
+    </div>
+
+</div>
+
+
+<!-- CREATE ONBOARDING -->
+<div class="onb-panel">
+
+    <div class="onb-panel-header">
+        <div>
+            <h3>Create Onboarding Record</h3>
+            <div class="onb-muted mt-1">
+                Start onboarding for an active employee
+            </div>
+        </div>
+        <i class="bi bi-person-plus text-secondary"></i>
+    </div>
+
+    <div class="onb-panel-body">
+
+        {% if available_employees %}
+
+        <form method="POST" action="{{ url_for('create_onboarding') }}">
+
+            <div class="onb-form-grid">
+
+                <div class="onb-field">
+                    <label>Employee *</label>
+                    <select name="employee_id" required>
+                        <option value="">Select employee</option>
+                        {% for employee in available_employees %}
+                        <option value="{{ employee.employee_id }}">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                            — {{ employee.employee_code }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="onb-field">
+                    <label>Onboarding Start Date *</label>
+                    <input type="date" name="start_date" required>
+                </div>
+
+                <div class="onb-field">
+                    <label>HR Coordinator</label>
+                    <input type="text" value="{{ session.get('username', 'HR Admin') }}"
+                           disabled>
+                </div>
+
+                <div class="onb-field full">
+                    <label>Notes</label>
+                    <textarea name="notes"
+                              placeholder="Add onboarding instructions or notes..."></textarea>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end mt-3">
+                <button type="submit" class="onb-submit">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Create Onboarding
+                </button>
+            </div>
+
+        </form>
+
+        {% else %}
+
+        <div class="onb-empty">
+            No eligible active employees available.
+            An employee can have only one onboarding record in this version.
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+
+<!-- ONBOARDING WORKSPACE -->
+<div class="onb-panel">
+
+    <div class="onb-panel-header">
+        <div>
+            <h3>Onboarding Worklist</h3>
+            <div class="onb-muted mt-1">
+                Manage employee onboarding progress and assigned tasks
+            </div>
+        </div>
+
+        <span class="onb-muted">
+            {{ onboardings|length }} records
+        </span>
+    </div>
+
+    <div class="onb-panel-body">
+
+        <div class="onb-cards">
+
+            {% for onboarding in onboardings %}
+
+            {% set task_list = tasks_by_onboarding.get(onboarding.onboarding_id, []) %}
+            {% set progress = ((onboarding.completed_tasks / onboarding.total_tasks) * 100)|round|int if onboarding.total_tasks else 0 %}
+            {% set status_class = onboarding.onboarding_status|lower|replace(' ', '-') %}
+
+            <div class="onb-card">
+
+                <div class="onb-card-header">
+
+                    <div>
+                        <div class="onb-name">
+                            {{ onboarding.first_name }} {{ onboarding.last_name }}
+                        </div>
+
+                        <div class="onb-code">
+                            {{ onboarding.employee_code }}
+                            · {{ onboarding.designation or 'Employee' }}
+                            · {{ onboarding.department_name or 'Unassigned' }}
+                        </div>
+
+                        <div class="onb-muted mt-2">
+                            Started:
+                            {{ onboarding.start_date.strftime('%d %b %Y') }}
+                        </div>
+                    </div>
+
+                    <span class="onb-status onb-{{ status_class }}">
+                        {{ onboarding.onboarding_status }}
+                    </span>
+
+                </div>
+
+
+                <div class="onb-card-body">
+
+                    <div class="onb-progress-label">
+                        <span>Task completion</span>
+                        <strong>
+                            {{ onboarding.completed_tasks }} /
+                            {{ onboarding.total_tasks }} tasks
+                            ({{ progress }}%)
+                        </strong>
+                    </div>
+
+                    <div class="onb-progress-track">
+                        <div class="onb-progress-fill"
+                             style="width:{{ progress }}%">
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                        <div class="onb-tasks-title mb-0">
+                            Onboarding Checklist
+                        </div>
+                        <span class="onb-muted">
+                            {{ task_list|length }} tasks
+                        </span>
+                    </div>
+
+
+                    {% for task in task_list %}
+
+                    <div class="onb-task">
+
+                        <div>
+                            <div class="onb-task-title">
+                                {{ task.task_title }}
+                            </div>
+
+                            <div class="onb-task-meta">
+                                {{ task.task_category }}
+                                {% if task.due_date %}
+                                · Due {{ task.due_date.strftime('%d %b %Y') }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <form method="POST"
+                              action="{{ url_for('update_onboarding_task', task_id=task.task_id) }}"
+                              class="onb-task-form">
+
+                            <select name="task_status">
+                                {% for status in ['Pending', 'In Progress', 'Completed'] %}
+                                <option value="{{ status }}"
+                                    {% if task.task_status == status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <button type="submit" class="onb-task-update">
+                                Update
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="onb-empty">
+                        No tasks have been assigned yet.
+                    </div>
+
+                    {% endfor %}
+
+
+                    {% if onboarding.onboarding_status != 'Completed' %}
+
+                    <div class="onb-add-task">
+                        <h4>
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add Onboarding Task
+                        </h4>
+
+                        <form method="POST"
+                              action="{{ url_for('create_onboarding_task', onboarding_id=onboarding.onboarding_id) }}">
+
+                            <div class="onb-form-grid">
+
+                                <div class="onb-field">
+                                    <label>Task Name *</label>
+                                    <input type="text" name="task_title"
+                                           placeholder="e.g. Collect ID documents"
+                                           required>
+                                </div>
+
+                                <div class="onb-field">
+                                    <label>Category</label>
+                                    <select name="task_category">
+                                        <option value="Documentation">Documentation</option>
+                                        <option value="IT Setup">IT Setup</option>
+                                        <option value="HR Orientation">HR Orientation</option>
+                                        <option value="Training">Training</option>
+                                        <option value="Administration">Administration</option>
+                                    </select>
+                                </div>
+
+                                <div class="onb-field">
+                                    <label>Due Date</label>
+                                    <input type="date" name="due_date">
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="onb-submit">
+                                    Add Task
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    {% else %}
+
+                    <div class="onb-muted mt-3">
+                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                        Onboarding completed
+                        {% if onboarding.completion_date %}
+                        on {{ onboarding.completion_date.strftime('%d %b %Y') }}
+                        {% endif %}
+                    </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="onb-empty">
+                <i class="bi bi-person-check fs-3 d-block mb-2"></i>
+                No onboarding records yet. Create the first onboarding record above.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

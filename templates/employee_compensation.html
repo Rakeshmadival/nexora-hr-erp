@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="mb-4">
+    <p class="text-muted small">MY WORKSPACE / COMPENSATION</p>
+    <h2 class="fw-bold">My Compensation</h2>
+    <p class="text-muted small">
+        View your monthly salary and payment records.
+    </p>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Salary History</h5>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Pay Period</th>
+                        <th>Basic</th>
+                        <th>Allowances</th>
+                        <th>Deductions</th>
+                        <th>Net Salary</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for p in payroll_records %}
+                    <tr>
+                        <td>{{ p.pay_period.strftime('%b %Y') }}</td>
+                        <td>₹{{ "%.2f"|format(p.basic_salary) }}</td>
+                        <td>₹{{ "%.2f"|format(p.allowances) }}</td>
+                        <td>₹{{ "%.2f"|format(p.deductions) }}</td>
+                        <td class="fw-bold">
+                            ₹{{ "%.2f"|format(p.net_salary) }}
+                        </td>
+                        <td>
+                            <span class="badge bg-success-subtle text-success">
+                                {{ p.payment_status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            No salary records available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('employee_portal') }}"
+   class="btn btn-outline-secondary btn-sm mt-3">
+    Back to Employee Portal
+</a>
+
+{% endblock %}

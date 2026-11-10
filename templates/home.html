@@ -1,0 +1,1761 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080d20">
+
+    <meta name="description"
+          content="NEXORA is an enterprise-inspired HR management system covering workforce management, recruitment, onboarding, attendance and employee self-service.">
+
+    <title>NEXORA — People Operations, Reimagined</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #080d20;
+            --bg-soft: #101a35;
+            --blue: #6da8ff;
+            --cyan: #65d9eb;
+            --violet: #a28cff;
+            --white: #f5f7ff;
+            --muted: #98a7c5;
+            --glass: rgba(255,255,255,.055);
+            --glass-border: rgba(255,255,255,.11);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* AMBIENT BACKGROUND */
+
+        .ambient {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient::before {
+            content: "";
+            position: absolute;
+            width: 680px;
+            height: 680px;
+            top: -260px;
+            left: -180px;
+            border-radius: 50%;
+            background: rgba(43,102,255,.20);
+            filter: blur(130px);
+            animation: floatGlow 16s ease-in-out infinite alternate;
+        }
+
+        .ambient::after {
+            content: "";
+            position: absolute;
+            width: 620px;
+            height: 620px;
+            right: -200px;
+            top: 240px;
+            border-radius: 50%;
+            background: rgba(129,82,255,.17);
+            filter: blur(140px);
+            animation: floatGlow 19s ease-in-out infinite alternate-reverse;
+        }
+
+        .ambient-extra {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            left: 42%;
+            top: 760px;
+            border-radius: 50%;
+            background: rgba(38,189,211,.09);
+            filter: blur(120px);
+        }
+
+        @keyframes floatGlow {
+            from {
+                transform: translate(0,0) scale(1);
+            }
+            to {
+                transform: translate(70px,55px) scale(1.17);
+            }
+        }
+
+        .site-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* NAVIGATION */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 17px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            background: rgba(8,13,32,.74);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(255,255,255,.07);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 190px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+            color: white;
+
+            background: linear-gradient(140deg,#2589ee,#7668f5);
+            box-shadow: 0 8px 30px rgba(65,119,245,.3);
+        }
+
+        .brand-name {
+            font-family: 'Manrope',sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-sub {
+            font-size: 8px;
+            letter-spacing: 2.5px;
+            color: #8b9bb8;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #aab8d2;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-login {
+            color: #dce7ff;
+            font-size: 12px;
+            padding: 11px 16px;
+        }
+
+        .nav-cta {
+            padding: 11px 18px;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,.17);
+            border-radius: 9px;
+            background: rgba(255,255,255,.08);
+            transition: .25s;
+        }
+
+        .nav-cta:hover {
+            color: white;
+            background: rgba(255,255,255,.15);
+            transform: translateY(-2px);
+        }
+
+        /* HERO */
+
+
+.gradient-text {
+    background: linear-gradient(
+        100deg,
+        #84bdff,
+        #82d7ee,
+        #b6a2ff
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+
+        .hero {
+            min-height: 690px;
+            padding: 110px 6% 90px;
+            display: grid;
+            grid-template-columns: 1.03fr .97fr;
+            align-items: center;
+            gap: 65px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #bcd2ff;
+            background: rgba(96,151,255,.09);
+            border: 1px solid rgba(116,166,255,.20);
+            padding: 9px 14px;
+            border-radius: 30px;
+            font-size: 10px;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .pulse {
+            width: 7px;
+            height: 7px;
+            background: #64dfba;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #64dfba;
+        }
+
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(42px,5.1vw,72px);
+            line-height: 1.12;
+            font-weight: 800;
+            letter-spacing: -3.5px;
+            max-width: 700px;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(
+                100deg,
+                #84bdff 5%,
+                #82d7ee 45%,
+                #b6a2ff 95%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            margin-top: 24px;
+            color: #9cacc8;
+            line-height: 1.9;
+            font-size: 14px;
+            max-width: 530px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 35px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            min-height: 49px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0 22px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            transition: .25s;
+        }
+
+        .primary-button {
+            color: #09132c;
+            background: linear-gradient(110deg,#93c1ff,#72d8e9);
+            box-shadow: 0 10px 32px rgba(78,161,255,.22);
+        }
+
+        .primary-button:hover {
+            color: #09132c;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 42px rgba(78,161,255,.33);
+        }
+
+        .secondary-button {
+            color: #e5edff;
+            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.045);
+        }
+
+        .secondary-button:hover {
+            color: white;
+            background: rgba(255,255,255,.10);
+        }
+
+        .hero-footnote {
+            margin-top: 27px;
+            font-size: 10px;
+            color: #70819f;
+        }
+
+        /* PRODUCT PREVIEW */
+
+        .preview-wrap {
+            position: relative;
+            perspective: 1200px;
+        }
+
+        .preview-glow {
+            position: absolute;
+            width: 75%;
+            height: 80%;
+            left: 12%;
+            top: 10%;
+            background: linear-gradient(130deg,#276bea,#9566eb);
+            filter: blur(100px);
+            opacity: .22;
+        }
+
+        .product-window {
+            position: relative;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 17px;
+            overflow: hidden;
+            z-index:1;
+
+            background: linear-gradient(
+                140deg,
+                rgba(255,255,255,.105),
+                rgba(255,255,255,.035)
+            );
+
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+
+            box-shadow:
+                0 35px 100px rgba(0,0,0,.4),
+                inset 0 1px 0 rgba(255,255,255,.15);
+
+            transform: rotateY(-5deg) rotateX(2deg);
+            transition: transform .5s;
+        }
+
+        .product-window:hover {
+            transform: rotateY(0) rotateX(0) translateY(-5px);
+        }
+
+        .window-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 17px;
+            border-bottom: 1px solid rgba(255,255,255,.09);
+            background: rgba(9,17,39,.42);
+        }
+
+        .window-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .window-mini-icon {
+            width: 25px;
+            height: 25px;
+            display: grid;
+            place-items: center;
+            background: #347ee7;
+            border-radius: 7px;
+            font-size: 12px;
+        }
+
+        .window-status {
+            color: #70e0bd;
+            font-size: 9px;
+        }
+
+        .window-body {
+            padding: 23px 20px 20px;
+        }
+
+        .window-welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 19px;
+        }
+
+        .window-welcome h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .window-welcome p {
+            color: #91a2c1;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .window-date {
+            color: #a9b9d8;
+            font-size: 9px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .preview-kpis {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 10px;
+        }
+
+        .preview-kpi {
+            padding: 13px 11px;
+            border: 1px solid rgba(255,255,255,.085);
+            background: rgba(255,255,255,.045);
+            border-radius: 9px;
+        }
+
+        .preview-kpi span {
+            color: #8fa1c1;
+            font-size: 8px;
+            letter-spacing: .4px;
+        }
+
+        .preview-kpi strong {
+            display: block;
+            font-family: 'Manrope',sans-serif;
+            font-size: 22px;
+            margin-top: 7px;
+        }
+
+        .preview-kpi small {
+            color: #70d8b5;
+            font-size: 8px;
+        }
+
+        .preview-lower {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 11px;
+            margin-top: 12px;
+        }
+
+        .preview-panel {
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.035);
+            border-radius: 9px;
+            min-height: 160px;
+        }
+
+        .preview-panel h4 {
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .bar-line {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 13px;
+        }
+
+        .bar-label {
+            color: #9dacc7;
+            font-size: 8px;
+            width: 70px;
+        }
+
+        .bar-track {
+            height: 6px;
+            flex: 1;
+            background: rgba(255,255,255,.08);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg,#579df5,#79d7ed);
+            border-radius: 20px;
+        }
+
+        .preview-task {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .task-icon {
+            height: 25px;
+            width: 25px;
+            border-radius: 7px;
+            display: grid;
+            place-items: center;
+            background: rgba(91,146,255,.14);
+            color: #8dbaff;
+            font-size: 11px;
+        }
+
+        .task-text {
+            font-size: 8px;
+            color: #c6d1e4;
+        }
+
+        .task-text small {
+            display: block;
+            font-size: 7px;
+            color: #8395b4;
+            margin-top: 3px;
+        }
+
+        .window-caption {
+            text-align: center;
+            padding: 11px;
+            color: #7f91b0;
+            font-size: 8px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            letter-spacing: .5px;
+        }
+
+        .float-tag {
+            position: absolute;
+            padding: 12px 15px;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 11px;
+            background: rgba(21,34,66,.78);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 15px 45px rgba(0,0,0,.2);
+            color: #d9e7ff;
+            font-size: 9px;
+            animation: floatTag 5s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .float-tag i {
+            color: #7edcf1;
+            margin-right: 6px;
+        }
+
+        .float-left {
+            left: -40px;
+            top: 25%;
+            z-index:6;
+        }
+
+        .float-right {
+            right: -29px;
+            bottom: 16%;
+            animation-delay: -2.5s;
+        }
+
+        @keyframes floatTag {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-9px); }
+        }
+
+        /* DIVIDER / TRUST STRIP */
+
+        .trust-strip {
+            margin: 0 6%;
+            padding: 24px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 34px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #a1b0cc;
+            font-size: 10px;
+        }
+
+        .trust-item i {
+            color: #7caeff;
+            font-size: 15px;
+        }
+
+        /* SECTION COMMON */
+
+        .section {
+            padding: 105px 6%;
+        }
+
+        .section-heading {
+            max-width: 680px;
+            margin-bottom: 45px;
+        }
+
+        .section-label {
+            text-transform: uppercase;
+            color: #87b9ff;
+            letter-spacing: 2px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 {
+            font-family: 'Manrope',sans-serif;
+            font-size: clamp(30px,4vw,45px);
+            line-height: 1.23;
+            letter-spacing: -1.8px;
+        }
+
+        .section-heading p {
+            color: #92a2bf;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-top: 16px;
+        }
+
+        /* CAPABILITY CARDS */
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            position: relative;
+            padding: 26px;
+            min-height: 210px;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,.075),
+                rgba(255,255,255,.025)
+            );
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transition: .3s;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -55px;
+            bottom: -75px;
+            background: rgba(78,135,255,.12);
+            filter: blur(45px);
+            border-radius: 50%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(116,173,255,.35);
+            background: rgba(255,255,255,.085);
+        }
+
+        .feature-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: linear-gradient(
+                145deg,
+                rgba(89,153,255,.22),
+                rgba(150,116,255,.13)
+            );
+            color: #99c2ff;
+            font-size: 19px;
+            margin-bottom: 23px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Manrope',sans-serif;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #95a5c1;
+            font-size: 11px;
+            line-height: 1.8;
+            max-width: 330px;
+        }
+
+        /* LIFECYCLE SECTION */
+
+        .lifecycle {
+            padding: 75px 6%;
+            border-top: 1px solid rgba(255,255,255,.07);
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            background: linear-gradient(
+                120deg,
+                rgba(48,88,166,.11),
+                rgba(107,73,168,.08),
+                rgba(23,126,150,.08)
+            );
+        }
+
+        .lifecycle-grid {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 13px;
+            margin-top: 38px;
+        }
+
+        .lifecycle-step {
+            padding: 20px 16px;
+            border: 1px solid rgba(255,255,255,.11);
+            background: rgba(255,255,255,.045);
+            border-radius: 11px;
+        }
+
+        .step-number {
+            font-size: 9px;
+            color: #87b9ff;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .lifecycle-step h3 {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .lifecycle-step p {
+            color: #93a4c2;
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* DESIGN PHILOSOPHY */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: .9fr 1.1fr;
+            gap: 75px;
+            align-items: center;
+        }
+
+        .about-copy h2 {
+            font-family: 'Manrope',sans-serif;
+            font-size: clamp(30px,4vw,44px);
+            line-height: 1.25;
+            letter-spacing: -1.6px;
+        }
+
+        .about-copy p {
+            color: #99a9c5;
+            font-size: 12px;
+            line-height: 1.9;
+            margin-top: 18px;
+        }
+
+        .principles {
+            display: grid;
+            gap: 12px;
+        }
+
+        .principle {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(255,255,255,.04);
+            border-radius: 11px;
+        }
+
+        .principle i {
+            font-size: 18px;
+            color: #83b7ff;
+            margin-top: 2px;
+        }
+
+        .principle h3 {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .principle p {
+            font-size: 10px;
+            line-height: 1.7;
+            color: #90a2bf;
+        }
+
+        /* FINAL CTA */
+
+        .final-cta {
+            margin: 25px 6% 90px;
+            padding: 65px 30px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 18px;
+            background:
+                radial-gradient(
+                    ellipse at 20% 10%,
+                    rgba(75,143,255,.17),
+                    transparent 50%
+                ),
+                radial-gradient(
+                    ellipse at 85% 90%,
+                    rgba(155,107,255,.16),
+                    transparent 55%
+                ),
+                rgba(255,255,255,.045);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .final-cta h2 {
+            font-family: 'Manrope',sans-serif;
+            font-size: clamp(28px,4vw,41px);
+            letter-spacing: -1px;
+        }
+
+        .final-cta p {
+            margin: 14px auto 25px;
+            color: #9cacc8;
+            font-size: 12px;
+            line-height: 1.8;
+            max-width: 560px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            padding: 25px 6% 32px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            color: #eaf0ff;
+            font-family: 'Manrope',sans-serif;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            font-size: 15px;
+        }
+
+        .footer-copy {
+            color: #7889a8;
+            font-size: 9px;
+            line-height: 1.8;
+            max-width: 580px;
+        }
+
+        .footer-link {
+            color: #a8b9d6;
+            font-size: 10px;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:1100px) {
+            .hero {
+                gap: 35px;
+            }
+
+            .float-left {
+                left: -18px;
+            }
+
+            .float-right {
+                right: -12px;
+            }
+
+            .lifecycle-grid {
+                grid-template-columns: repeat(3,1fr);
+            }
+        }
+
+        @media(max-width:850px) {
+            .navbar {
+                padding: 15px 5%;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 85px 6% 75px;
+                gap: 70px;
+            }
+
+            .hero-copy {
+                max-width: 650px;
+            }
+
+            .preview-wrap {
+                width: min(100%,640px);
+                margin: 0 auto;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .section {
+                padding-top: 75px;
+                padding-bottom: 75px;
+            }
+        }
+
+        @media(max-width:560px) {
+            .brand {
+                min-width: unset;
+            }
+
+            .brand-name {
+                font-size: 17px;
+            }
+
+            .nav-login {
+                padding: 8px;
+            }
+
+            .nav-cta {
+                padding: 10px 12px;
+                font-size: 10px;
+            }
+
+            .hero {
+                padding-top: 68px;
+                gap: 55px;
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .hero-description {
+                font-size: 12px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons a {
+                width: 100%;
+            }
+
+            .float-tag {
+                display: none;
+            }
+
+            .preview-lower {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-panel {
+                min-height: 130px;
+            }
+
+            .trust-strip {
+                gap: 18px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                min-height: 180px;
+            }
+
+            .lifecycle-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .final-cta {
+                margin-bottom: 55px;
+                padding: 45px 22px;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media(prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="ambient">
+    <div class="ambient-extra"></div>
+</div>
+
+<div class="site-container">
+
+    <!-- NAVIGATION -->
+
+    <nav class="navbar">
+
+        <a href="{{ url_for('home') }}" class="brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-layers-fill"></i>
+            </div>
+
+            <div>
+                <div class="brand-name">NEXORA</div>
+                <div class="brand-sub">ENTERPRISE CLOUD</div>
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
+            <a href="#platform">Platform</a>
+            <a href="#capabilities">Capabilities</a>
+            <a href="#lifecycle">Employee Lifecycle</a>
+            <a href="#about">About NEXORA</a>
+        </div>
+
+
+        <div class="nav-actions">
+
+            {% if session.get('user_id') %}
+
+                {% if session.get('role') == 'Employee' %}
+                    <a href="{{ url_for('employee_portal') }}"
+                       class="nav-cta">
+                        My Workspace <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}"
+                       class="nav-cta">
+                        Open Workspace <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                {% endif %}
+
+            {% else %}
+
+                <a href="{{ url_for('login') }}" class="nav-login">
+                    Sign in
+                </a>
+
+                <a href="{{ url_for('login') }}" class="nav-cta">
+                    Access platform <i class="bi bi-arrow-up-right"></i>
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero" id="platform">
+
+        <div class="hero-copy">
+
+            <div class="eyebrow">
+                <span class="pulse"></span>
+                PEOPLE OPERATIONS, REIMAGINED
+            </div>
+
+            <h1>
+                Great workplaces begin with
+                <span class="gradient-text">better experiences.</span>
+            </h1>
+
+            <p class="hero-description">
+                One connected workspace to manage the employee lifecycle.
+                Bring workforce records, recruitment, onboarding,
+                leave, attendance and compensation information together
+                in one focused experience.
+            </p>
+
+
+            <div class="hero-buttons">
+
+                {% if session.get('user_id') %}
+
+                    {% if session.get('role') == 'Employee' %}
+                        <a href="{{ url_for('employee_portal') }}"
+                           class="primary-button">
+                            Enter my workspace
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard') }}"
+                           class="primary-button">
+                            Enter HR workspace
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    {% endif %}
+
+                {% else %}
+
+                    <a href="{{ url_for('login') }}"
+                       class="primary-button">
+                        Explore the workspace
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+
+                {% endif %}
+
+                <a href="#capabilities" class="secondary-button">
+                    Discover capabilities
+                    <i class="bi bi-arrow-down"></i>
+                </a>
+
+            </div>
+
+            <div class="hero-footnote">
+                <i class="bi bi-stars"></i>
+                A portfolio-built enterprise HR management simulation.
+            </div>
+
+        </div>
+
+
+        <!-- GLASS PRODUCT PREVIEW -->
+
+        <div class="preview-wrap">
+
+            <div class="preview-glow"></div>
+
+            <div class="float-tag float-left">
+                <i class="bi bi-diagram-3"></i>
+                PEOPLE OPERATIONS
+            </div>
+
+            <div class="product-window">
+
+                <div class="window-header">
+
+                    <div class="window-brand">
+                        <div class="window-mini-icon">
+                            <i class="bi bi-layers-fill"></i>
+                        </div>
+                        NEXORA
+                    </div>
+
+                    <div class="window-status">
+                        <i class="bi bi-circle-fill"></i>
+                        Workspace preview
+                    </div>
+
+                </div>
+
+
+                <div class="window-body">
+
+                    <div class="window-welcome">
+
+                        <div>
+                            <h3>Workforce Overview</h3>
+                            <p>Your organisation at a glance</p>
+                        </div>
+
+                        <div class="window-date">
+                            PEOPLE / OVERVIEW
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-kpis">
+
+                        <div class="preview-kpi">
+                            <span>WORKFORCE</span>
+                            <strong>People</strong>
+                            <small><i class="bi bi-people"></i> Directory</small>
+                        </div>
+
+                        <div class="preview-kpi">
+                            <span>HIRING</span>
+                            <strong>Talent</strong>
+                            <small><i class="bi bi-person-check"></i> Pipeline</small>
+                        </div>
+
+                        <div class="preview-kpi">
+                            <span>INSIGHTS</span>
+                            <strong>Reports</strong>
+                            <small><i class="bi bi-graph-up"></i> Analytics</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-lower">
+
+                        <div class="preview-panel">
+
+                            <h4>People Operations</h4>
+
+                            <div class="bar-line">
+                                <span class="bar-label">Workforce</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:88%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bar-line">
+                                <span class="bar-label">Recruitment</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:67%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bar-line">
+                                <span class="bar-label">Onboarding</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:77%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bar-line">
+                                <span class="bar-label">Engagement</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:58%"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="preview-panel">
+
+                            <h4>Employee Lifecycle</h4>
+
+                            <div class="preview-task">
+                                <div class="task-icon">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <div class="task-text">
+                                    Recruitment
+                                    <small>Candidate pipeline</small>
+                                </div>
+                            </div>
+
+                            <div class="preview-task">
+                                <div class="task-icon">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+                                <div class="task-text">
+                                    Onboarding
+                                    <small>Task management</small>
+                                </div>
+                            </div>
+
+                            <div class="preview-task">
+                                <div class="task-icon">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div class="task-text">
+                                    Time & Leave
+                                    <small>Employee records</small>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="window-caption">
+                    PRODUCT INTERFACE PREVIEW · ILLUSTRATIVE CONTENT
+                </div>
+
+            </div>
+
+            <div class="float-tag float-right">
+                <i class="bi bi-shield-check"></i>
+                ROLE-AWARE WORKSPACE
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PLATFORM HIGHLIGHTS -->
+
+    <div class="trust-strip">
+
+        <div class="trust-item">
+            <i class="bi bi-people"></i>
+            Workforce Management
+        </div>
+
+        <div class="trust-item">
+            <i class="bi bi-person-workspace"></i>
+            Talent Lifecycle
+        </div>
+
+        <div class="trust-item">
+            <i class="bi bi-calendar2-check"></i>
+            Time & Attendance
+        </div>
+
+        <div class="trust-item">
+            <i class="bi bi-wallet2"></i>
+            Compensation Records
+        </div>
+
+        <div class="trust-item">
+            <i class="bi bi-bar-chart"></i>
+            Business Insights
+        </div>
+
+    </div>
+
+
+    <!-- CAPABILITIES -->
+
+    <section class="section" id="capabilities">
+
+        <div class="section-heading">
+
+            <div class="section-label">
+                THE PLATFORM
+            </div>
+
+            <h2>
+                Every people process.
+                <span class="gradient-text">One connected experience.</span>
+            </h2>
+
+            <p>
+                NEXORA brings key HR workflows into a consistent workspace.
+                Move from employee records to recruitment, onboarding,
+                time management and workforce reporting.
+            </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3>Workforce Management</h3>
+                <p>
+                    Maintain employee profiles, department assignments,
+                    designations and workforce status in one directory.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-person-workspace"></i>
+                </div>
+                <h3>Recruitment & Talent</h3>
+                <p>
+                    Create job openings, register candidates and follow
+                    applications through the hiring pipeline.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <h3>Employee Onboarding</h3>
+                <p>
+                    Organise induction activities, assign checklist tasks
+                    and monitor onboarding progress.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-calendar2-check"></i>
+                </div>
+                <h3>Leave & Attendance</h3>
+                <p>
+                    Manage leave requests, approvals, daily attendance
+                    entries and employee time records.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h3>Payroll Information</h3>
+                <p>
+                    Maintain monthly salary records, allowances,
+                    deductions and payment statuses.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h3>Reports & Analytics</h3>
+                <p>
+                    Explore workforce distribution, leave activity,
+                    attendance records and payroll summaries.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <h3>Employee Self-Service</h3>
+                <p>
+                    Give employees a dedicated space to review their
+                    profile, submit leave requests and view their records.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h3>Access Management</h3>
+                <p>
+                    Manage user accounts and assign application roles
+                    for HR Admin, Manager and Employee workspaces.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <h3>Organisation Structure</h3>
+                <p>
+                    View department-level workforce distribution
+                    and employee-to-department assignments.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- EMPLOYEE LIFECYCLE -->
+
+    <section class="lifecycle" id="lifecycle">
+
+        <div class="section-heading">
+
+            <div class="section-label">
+                EMPLOYEE LIFECYCLE
+            </div>
+
+            <h2>
+                From the first conversation
+                to everyday operations.
+            </h2>
+
+            <p>
+                A connected view of the major stages represented
+                in the NEXORA HR workflow simulation.
+            </p>
+
+        </div>
+
+
+        <div class="lifecycle-grid">
+
+            <div class="lifecycle-step">
+                <div class="step-number">01 / ATTRACT</div>
+                <h3>Recruitment</h3>
+                <p>Create job openings and manage candidate applications.</p>
+            </div>
+
+            <div class="lifecycle-step">
+                <div class="step-number">02 / WELCOME</div>
+                <h3>Onboarding</h3>
+                <p>Coordinate documentation, IT setup and induction tasks.</p>
+            </div>
+
+            <div class="lifecycle-step">
+                <div class="step-number">03 / MANAGE</div>
+                <h3>Workforce</h3>
+                <p>Maintain employee information and organisational assignments.</p>
+            </div>
+
+            <div class="lifecycle-step">
+                <div class="step-number">04 / SUPPORT</div>
+                <h3>Time & Compensation</h3>
+                <p>Manage leave, attendance and salary information.</p>
+            </div>
+
+            <div class="lifecycle-step">
+                <div class="step-number">05 / INSIGHT</div>
+                <h3>Analytics</h3>
+                <p>Review workforce and operational information through reports.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT / DESIGN PRINCIPLES -->
+
+    <section class="section" id="about">
+
+        <div class="about-grid">
+
+            <div class="about-copy">
+
+                <div class="section-label">
+                    BUILT AROUND CLARITY
+                </div>
+
+                <h2>
+                    Enterprise workflows.
+                    <span class="gradient-text">Human-centred design.</span>
+                </h2>
+
+                <p>
+                    NEXORA explores how complex HR processes can be
+                    presented through a consistent, role-aware and
+                    user-focused interface.
+                </p>
+
+                <p>
+                    Its design direction takes inspiration from modern
+                    enterprise applications and SAP Fiori design principles,
+                    while remaining an independent HR software simulation.
+                </p>
+
+            </div>
+
+
+            <div class="principles">
+
+                <div class="principle">
+                    <i class="bi bi-grid-1x2"></i>
+                    <div>
+                        <h3>Unified workspace</h3>
+                        <p>
+                            Related HR operations are organised into
+                            connected modules and consistent screens.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <i class="bi bi-person-lock"></i>
+                    <div>
+                        <h3>Role-aware experiences</h3>
+                        <p>
+                            Separate HR and employee experiences
+                            with server-side role restrictions.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <i class="bi bi-database-check"></i>
+                    <div>
+                        <h3>Structured data</h3>
+                        <p>
+                            Business records are maintained through
+                            a relational MySQL database.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <i class="bi bi-phone"></i>
+                    <div>
+                        <h3>Responsive interface</h3>
+                        <p>
+                            A consistent experience across desktop,
+                            tablet and mobile screen sizes.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINAL CALL TO ACTION -->
+
+    <section class="final-cta">
+
+        <div class="section-label">
+            YOUR WORKSPACE STARTS HERE
+        </div>
+
+        <h2>
+            Make every people process
+            <span class="gradient-text">feel connected.</span>
+        </h2>
+
+        <p>
+            Explore the NEXORA enterprise HR management simulation,
+            from workforce administration to employee self-service.
+        </p>
+
+        {% if session.get('user_id') %}
+
+            {% if session.get('role') == 'Employee' %}
+
+                <a href="{{ url_for('employee_portal') }}"
+                   class="primary-button">
+                    Enter My Workspace
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="primary-button">
+                    Open HR Workspace
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            {% endif %}
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}"
+               class="primary-button">
+                Sign in to NEXORA
+                <i class="bi bi-arrow-up-right"></i>
+            </a>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <div>
+            <div class="footer-brand">NEXORA</div>
+            <div class="footer-copy">
+                Enterprise HR Management Simulation
+            </div>
+        </div>
+
+        <div class="footer-copy">
+            Independent portfolio project inspired by enterprise
+            HR workflows and SAP Fiori design principles.
+            Not actual SAP software and not affiliated with SAP SE.
+        </div>
+
+        <a href="{{ url_for('login') }}" class="footer-link">
+            Platform Sign In
+            <i class="bi bi-arrow-up-right"></i>
+        </a>
+
+    </footer>
+
+</div>
+
+</body>
+</html>

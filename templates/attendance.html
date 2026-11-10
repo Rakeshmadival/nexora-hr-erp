@@ -1,0 +1,272 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.att-heading {
+    display:flex; justify-content:space-between; flex-wrap:wrap;
+    align-items:center; gap:14px; margin-bottom:24px;
+}
+.att-heading h1 {
+    font-size:25px; font-weight:750; color:#17243b; margin:0 0 6px;
+}
+.att-muted { color:#8793a5; font-size:12px; }
+.att-stats {
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:12px; margin-bottom:22px;
+}
+.att-stat {
+    background:#fff; border:1px solid #e9edf3;
+    border-radius:11px; padding:16px;
+}
+.att-stat span { color:#8793a5; font-size:10px; font-weight:650; }
+.att-stat h3 { color:#17243b; font-size:25px; font-weight:750; margin:8px 0 0; }
+.att-panel {
+    background:#fff; border:1px solid #e9edf3;
+    border-radius:12px; overflow:hidden; margin-bottom:20px;
+}
+.att-toolbar {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px; padding:17px 20px;
+    border-bottom:1px solid #edf0f5;
+}
+.att-toolbar h3 { font-size:14px; font-weight:700; color:#26364e; margin:0; }
+.att-date-form { display:flex; gap:8px; align-items:center; }
+.att-date-form input, .att-search {
+    border:1px solid #e2e8f0; border-radius:7px;
+    padding:9px 11px; font-size:11px; color:#506078;
+}
+.att-primary {
+    border:0; border-radius:7px; padding:10px 14px;
+    background:#0875d1; color:white; font-size:11px; font-weight:650;
+}
+.att-table-wrap { overflow-x:auto; }
+.att-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.att-table th {
+    background:#fafbfd; color:#8793a5; padding:13px 14px;
+    font-size:10px; text-align:left; text-transform:uppercase;
+}
+.att-table td {
+    border-top:1px solid #f0f2f6; padding:13px 14px;
+    font-size:11px; color:#53627a; vertical-align:middle;
+}
+.att-name { color:#26364e; font-weight:650; }
+.att-code { color:#98a3b2; font-size:10px; margin-top:3px; }
+.att-input, .att-select {
+    border:1px solid #e2e8f0; border-radius:6px;
+    padding:7px; color:#526178; font-size:11px; background:white;
+}
+.att-select { min-width:112px; }
+.att-time { width:100px; }
+.att-remark { width:120px; }
+.att-save {
+    background:#edf4ff; border:0; color:#2675c8;
+    border-radius:6px; padding:8px 10px;
+    font-size:10px; font-weight:700;
+}
+.att-save:hover { background:#dcecff; }
+.att-status {
+    display:inline-block; border-radius:20px;
+    padding:5px 8px; font-size:10px; font-weight:650;
+}
+.st-present { background:#e8f7ef; color:#208354; }
+.st-absent { background:#fff0ed; color:#c45c4d; }
+.st-half { background:#fff4df; color:#a86a13; }
+.st-leave { background:#f1edff; color:#8162d8; }
+.st-unmarked { background:#edf0f4; color:#718096; }
+.att-empty { padding:35px; text-align:center; color:#96a1b0; font-size:12px; }
+@media(max-width:850px) { .att-stats { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:520px) { .att-stats { grid-template-columns:repeat(2,1fr); } }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="att-heading">
+    <div>
+        <div class="att-muted mb-2">HOME / PEOPLE / TIME & ATTENDANCE</div>
+        <h1>Attendance Management</h1>
+        <div class="att-muted">
+            Manage daily employee attendance and working hours.
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('attendance_management') }}"
+          class="att-date-form">
+        <input type="date" name="date" value="{{ selected_date }}" required>
+        <button class="att-primary" type="submit">
+            <i class="bi bi-calendar-check me-1"></i> View
+        </button>
+    </form>
+</div>
+
+
+<!-- ATTENDANCE SUMMARY -->
+<div class="att-stats">
+    <div class="att-stat">
+        <span>ACTIVE EMPLOYEES</span>
+        <h3>{{ counts.total }}</h3>
+    </div>
+
+    <div class="att-stat">
+        <span>PRESENT</span>
+        <h3>{{ counts.present }}</h3>
+    </div>
+
+    <div class="att-stat">
+        <span>ABSENT</span>
+        <h3>{{ counts.absent }}</h3>
+    </div>
+
+    <div class="att-stat">
+        <span>HALF DAY</span>
+        <h3>{{ counts.half_day }}</h3>
+    </div>
+
+    <div class="att-stat">
+        <span>NOT MARKED</span>
+        <h3>{{ counts.unmarked }}</h3>
+    </div>
+</div>
+
+
+<!-- ATTENDANCE WORKLIST -->
+<div class="att-panel">
+
+    <div class="att-toolbar">
+        <div>
+            <h3>Daily Attendance Worklist</h3>
+            <div class="att-muted mt-1">
+                Attendance date: {{ selected_date }}
+            </div>
+        </div>
+
+        <input type="text" id="attSearch" class="att-search"
+               placeholder="Search employee...">
+    </div>
+
+    <div class="att-table-wrap">
+
+        <table class="att-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Current Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="attTableBody">
+
+                {% for record in attendance_records %}
+                <tr data-search="{{ record.first_name }} {{ record.last_name }} {{ record.employee_code }} {{ record.department_name or '' }}">
+
+                    <td>
+                        <div class="att-name">
+                            {{ record.first_name }} {{ record.last_name }}
+                        </div>
+                        <div class="att-code">
+                            {{ record.employee_code }} · {{ record.designation or 'Employee' }}
+                        </div>
+                    </td>
+
+                    <td>{{ record.department_name or 'Unassigned' }}</td>
+
+                    <td colspan="5">
+                        <form method="POST"
+                              action="{{ url_for('mark_attendance', employee_id=record.employee_id) }}"
+                              class="d-flex align-items-center gap-2">
+
+                            <input type="hidden" name="attendance_date"
+                                   value="{{ selected_date }}">
+
+                            <input class="att-input att-time" type="time"
+                                   name="check_in"
+                                   value="{{ record.check_in }}"
+                                   aria-label="Check-in time">
+
+                            <input class="att-input att-time" type="time"
+                                   name="check_out"
+                                   value="{{ record.check_out }}"
+                                   aria-label="Check-out time">
+
+                            <select class="att-select" name="attendance_status" required>
+                                <option value="" disabled
+                                    {% if not record.attendance_status %}selected{% endif %}>
+                                    Select status
+                                </option>
+
+                                {% for status in ['Present', 'Absent', 'Half Day', 'On Leave'] %}
+                                <option value="{{ status }}"
+                                    {% if record.attendance_status == status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <input class="att-input att-remark" type="text"
+                                   name="remarks"
+                                   value="{{ record.remarks or '' }}"
+                                   placeholder="Remarks">
+
+                            <button class="att-save" type="submit">
+                                <i class="bi bi-check2"></i> Save
+                            </button>
+                        </form>
+                    </td>
+
+                    <td>
+                        {% if record.attendance_status == 'Present' %}
+                            <span class="att-status st-present">Present</span>
+                        {% elif record.attendance_status == 'Absent' %}
+                            <span class="att-status st-absent">Absent</span>
+                        {% elif record.attendance_status == 'Half Day' %}
+                            <span class="att-status st-half">Half Day</span>
+                        {% elif record.attendance_status == 'On Leave' %}
+                            <span class="att-status st-leave">On Leave</span>
+                        {% else %}
+                            <span class="att-status st-unmarked">Not Marked</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% else %}
+                <tr>
+                    <td colspan="8">
+                        <div class="att-empty">
+                            <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                            No active employees found. Add employees to begin tracking attendance.
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.getElementById("attSearch").addEventListener("input", function() {
+    const term = this.value.toLowerCase().trim();
+
+    document.querySelectorAll("#attTableBody tr[data-search]").forEach(row => {
+        row.style.display = row.dataset.search.toLowerCase().includes(term)
+            ? ""
+            : "none";
+    });
+});
+</script>
+{% endblock %}

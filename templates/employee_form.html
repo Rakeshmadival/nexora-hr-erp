@@ -1,0 +1,374 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.employee-form-page {
+    max-width: 1050px;
+}
+
+.form-heading {
+    margin-bottom: 24px;
+}
+
+.form-heading h1 {
+    font-size: 25px;
+    font-weight: 750;
+    color: #17243b;
+    margin-bottom: 6px;
+}
+
+.form-heading p {
+    font-size: 12px;
+    color: #8793a5;
+}
+
+.form-panel {
+    background: white;
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.form-panel-header {
+    padding: 17px 22px;
+    border-bottom: 1px solid #edf0f5;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.form-section-icon {
+    width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: #edf4ff;
+    color: #2675c8;
+}
+
+.form-panel-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #26364e;
+    margin: 0;
+}
+
+.form-panel-header p {
+    color: #9aa5b5;
+    font-size: 10px;
+    margin: 3px 0 0;
+}
+
+.form-panel-body {
+    padding: 23px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 19px 22px;
+}
+
+.form-field label {
+    display: block;
+    color: #526178;
+    font-size: 11px;
+    font-weight: 650;
+    margin-bottom: 8px;
+}
+
+.form-field label span {
+    color: #df6657;
+}
+
+.form-control-nexora,
+.form-select-nexora {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    background: white;
+    color: #33445d;
+    font-size: 12px;
+    outline: none;
+}
+
+.form-control-nexora:focus,
+.form-select-nexora:focus {
+    border-color: #5a9ddd;
+    box-shadow: 0 0 0 3px #eaf3ff;
+}
+
+.form-help {
+    color: #9aa5b5;
+    font-size: 10px;
+    margin-top: 6px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 22px;
+    border-top: 1px solid #edf0f5;
+}
+
+.btn-cancel {
+    padding: 10px 17px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    color: #66758b;
+    font-size: 12px;
+    text-decoration: none;
+    background: white;
+}
+
+.btn-save {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    background: #0875d1;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.btn-save:hover {
+    background: #0664b5;
+}
+
+@media(max-width: 650px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-panel-body {
+        padding: 17px;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+{% set editing = employee is defined and employee %}
+
+<div class="employee-form-page">
+
+    <div class="form-heading">
+        <div class="text-muted small mb-2">
+            HOME / PEOPLE / EMPLOYEE DIRECTORY /
+            {{ 'EDIT EMPLOYEE' if editing else 'NEW EMPLOYEE' }}
+        </div>
+
+        <h1>
+            {{ 'Update Employee' if editing else 'Employee Registration' }}
+        </h1>
+
+        <p>
+            {{ 'Update the employee information and save your changes.' if editing
+            else 'Create a new employee profile in the NEXORA workforce system.' }}
+        </p>
+    </div>
+
+
+    <form method="POST">
+
+        <!-- PERSONAL INFORMATION -->
+        <div class="form-panel">
+
+            <div class="form-panel-header">
+                <div class="form-section-icon">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                    <h3>Personal Information</h3>
+                    <p>Basic employee identity and contact details</p>
+                </div>
+            </div>
+
+            <div class="form-panel-body">
+
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label>Employee ID</label>
+                        <input
+                            class="form-control-nexora"
+                            name="employee_code"
+                            value="{{ employee.employee_code if editing else '' }}"
+                            placeholder="e.g. NX-1001"
+                            {% if editing %}readonly{% else %}required{% endif %}
+                        >
+                        <div class="form-help">
+                            Unique employee identification code
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>First Name <span>*</span></label>
+                        <input
+                            class="form-control-nexora"
+                            name="first_name"
+                            value="{{ employee.first_name if editing else '' }}"
+                            placeholder="Enter first name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>Last Name <span>*</span></label>
+                        <input
+                            class="form-control-nexora"
+                            name="last_name"
+                            value="{{ employee.last_name if editing else '' }}"
+                            placeholder="Enter last name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            class="form-control-nexora"
+                            name="email"
+                            value="{{ employee.email if editing and employee.email else '' }}"
+                            placeholder="employee@company.com"
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>Phone Number</label>
+                        <input
+                            type="tel"
+                            class="form-control-nexora"
+                            name="phone"
+                            value="{{ employee.phone if editing and employee.phone else '' }}"
+                            placeholder="Enter contact number"
+                        >
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- EMPLOYMENT INFORMATION -->
+        <div class="form-panel">
+
+            <div class="form-panel-header">
+                <div class="form-section-icon">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+
+                <div>
+                    <h3>Employment Information</h3>
+                    <p>Organisational assignment and employment details</p>
+                </div>
+            </div>
+
+            <div class="form-panel-body">
+
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label>Designation <span>*</span></label>
+                        <input
+                            class="form-control-nexora"
+                            name="designation"
+                            value="{{ employee.designation if editing and employee.designation else '' }}"
+                            placeholder="e.g. Software Engineer"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>Department <span>*</span></label>
+
+                        <select
+                            class="form-select-nexora"
+                            name="department_id"
+                            required
+                        >
+                            <option value="">Select department</option>
+
+                            {% for department in departments %}
+                            <option
+                                value="{{ department.department_id }}"
+                                {% if editing and employee.department_id == department.department_id %}selected{% endif %}
+                            >
+                                {{ department.department_name }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Joining Date <span>*</span></label>
+                        <input
+                            type="date"
+                            class="form-control-nexora"
+                            name="joining_date"
+                            value="{{ employee.joining_date.strftime('%Y-%m-%d') if editing and employee.joining_date else '' }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>Employment Status</label>
+
+                        <select
+                            class="form-select-nexora"
+                            name="employment_status"
+                        >
+                            <option value="Active"
+                                {% if not editing or employee.employment_status == 'Active' %}selected{% endif %}>
+                                Active
+                            </option>
+
+                            <option value="Inactive"
+                                {% if editing and employee.employment_status == 'Inactive' %}selected{% endif %}>
+                                Inactive
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- FORM ACTIONS -->
+        <div class="form-panel">
+
+            <div class="form-actions">
+
+                <a href="{{ url_for('employees') }}" class="btn-cancel">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-check2-circle me-1"></i>
+                    {{ 'Save Changes' if editing else 'Create Employee' }}
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,334 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.pay-heading {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px; margin-bottom:24px;
+}
+.pay-heading h1 {
+    font-size:25px; font-weight:750; color:#17243b; margin:0 0 6px;
+}
+.pay-muted { color:#8793a5; font-size:12px; }
+.pay-stats {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px; margin-bottom:22px;
+}
+.pay-stat,.pay-panel {
+    background:#fff; border:1px solid #e9edf3; border-radius:12px;
+}
+.pay-stat { padding:18px; }
+.pay-stat span { color:#8793a5; font-size:10px; font-weight:650; }
+.pay-stat h3 { color:#17243b; font-size:25px; font-weight:750; margin:8px 0 0; }
+.pay-panel { overflow:hidden; margin-bottom:20px; }
+.pay-panel-header {
+    padding:18px 21px; border-bottom:1px solid #edf0f5;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+}
+.pay-panel-header h3 { color:#26364e; font-size:14px; font-weight:700; margin:0; }
+.pay-panel-body { padding:21px; }
+.pay-form-grid {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;
+}
+.pay-field label {
+    display:block; color:#526178; font-size:11px;
+    font-weight:650; margin-bottom:7px;
+}
+.pay-field input,.pay-field select {
+    width:100%; min-height:40px; padding:9px 11px;
+    border:1px solid #e2e8f0; border-radius:7px;
+    background:#fff; color:#33445d; font-size:12px;
+}
+.pay-field input:focus,.pay-field select:focus {
+    outline:none; border-color:#5a9ddd; box-shadow:0 0 0 3px #eaf3ff;
+}
+.pay-preview {
+    display:flex; justify-content:space-between; align-items:center;
+    background:#f4f8fd; border:1px solid #e2edf9; border-radius:9px;
+    padding:15px 17px; margin-top:18px;
+}
+.pay-preview span { color:#63738b; font-size:11px; }
+.pay-preview strong { color:#1267b5; font-size:21px; }
+.pay-submit {
+    background:#0875d1; border:0; color:#fff; border-radius:7px;
+    padding:10px 16px; font-size:11px; font-weight:650;
+}
+.pay-submit:hover { background:#0664b5; }
+.pay-table-wrap { overflow-x:auto; }
+.pay-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.pay-table th {
+    background:#fafbfd; color:#8793a5; text-transform:uppercase;
+    font-size:10px; letter-spacing:.4px; padding:13px 14px; text-align:left;
+}
+.pay-table td {
+    border-top:1px solid #f0f2f6; padding:13px 14px;
+    color:#53627a; font-size:11px;
+}
+.pay-employee { color:#26364e; font-weight:650; }
+.pay-code { color:#98a3b2; font-size:10px; margin-top:3px; }
+.pay-status {
+    display:inline-block; padding:5px 9px; border-radius:20px;
+    font-size:10px; font-weight:650;
+}
+.pay-draft { background:#edf0f4; color:#718096; }
+.pay-processed { background:#eaf3ff; color:#2675c8; }
+.pay-paid { background:#e8f7ef; color:#208354; }
+.pay-hold { background:#fff4df; color:#a86a13; }
+.pay-empty { text-align:center; padding:35px; color:#96a1b0; font-size:12px; }
+@media(max-width:900px) { .pay-stats { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:650px) { .pay-form-grid { grid-template-columns:1fr; } }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="pay-heading">
+    <div>
+        <div class="pay-muted mb-2">HOME / PEOPLE / PAYROLL</div>
+        <h1>Payroll Management</h1>
+        <div class="pay-muted">
+            Manage employee salary records and monthly payroll information.
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('payroll_management') }}"
+          class="d-flex gap-2 align-items-center">
+        <input type="month" name="period" value="{{ selected_period }}"
+               class="form-control form-control-sm" required>
+        <button class="pay-submit" type="submit">View Period</button>
+    </form>
+</div>
+
+
+<!-- PAYROLL SUMMARY -->
+<div class="pay-stats">
+
+    <div class="pay-stat">
+        <span>PAYROLL RECORDS</span>
+        <h3>{{ summary.total_records }}</h3>
+    </div>
+
+    <div class="pay-stat">
+        <span>TOTAL NET PAYROLL</span>
+        <h3 style="font-size:21px;">
+            ₹{{ "%.2f"|format(summary.total_net_salary) }}
+        </h3>
+    </div>
+
+    <div class="pay-stat">
+        <span>PROCESSED</span>
+        <h3>{{ summary.processed }}</h3>
+    </div>
+
+    <div class="pay-stat">
+        <span>PAID</span>
+        <h3>{{ summary.paid }}</h3>
+    </div>
+
+</div>
+
+
+<!-- CREATE PAYROLL RECORD -->
+<div class="pay-panel">
+
+    <div class="pay-panel-header">
+        <div>
+            <h3>Create Payroll Record</h3>
+            <div class="pay-muted mt-1">
+                Enter salary components for an employee
+            </div>
+        </div>
+        <i class="bi bi-wallet2 text-secondary"></i>
+    </div>
+
+    <div class="pay-panel-body">
+
+        {% if employees %}
+
+        <form method="POST" action="{{ url_for('create_payroll') }}"
+              id="payrollForm">
+
+            <div class="pay-form-grid">
+
+                <div class="pay-field">
+                    <label>Employee *</label>
+                    <select name="employee_id" required>
+                        <option value="">Select employee</option>
+                        {% for employee in employees %}
+                        <option value="{{ employee.employee_id }}">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                            — {{ employee.employee_code }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="pay-field">
+                    <label>Pay Period *</label>
+                    <input type="month" name="pay_period"
+                           value="{{ selected_period }}" required>
+                </div>
+
+                <div class="pay-field">
+                    <label>Basic Salary (₹) *</label>
+                    <input type="number" id="basicSalary" name="basic_salary"
+                           min="0.01" step="0.01" placeholder="e.g. 25000"
+                           required>
+                </div>
+
+                <div class="pay-field">
+                    <label>Allowances (₹)</label>
+                    <input type="number" id="allowances" name="allowances"
+                           min="0" step="0.01" value="0">
+                </div>
+
+                <div class="pay-field">
+                    <label>Deductions (₹)</label>
+                    <input type="number" id="deductions" name="deductions"
+                           min="0" step="0.01" value="0">
+                </div>
+
+                <div class="pay-field">
+                    <label>Initial Record Status</label>
+                    <select name="payment_status">
+                        <option value="Draft">Draft</option>
+                        <option value="Processed">Processed</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="pay-preview">
+                <span>Calculated Net Salary</span>
+                <strong id="netSalaryPreview">₹0.00</strong>
+            </div>
+
+            <div class="d-flex justify-content-end mt-3">
+                <button type="submit" class="pay-submit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Save Payroll Record
+                </button>
+            </div>
+
+        </form>
+
+        {% else %}
+        <div class="pay-empty">
+            No active employees found. Add an employee before creating payroll.
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+
+<!-- PAYROLL WORKLIST -->
+<div class="pay-panel">
+
+    <div class="pay-panel-header">
+        <div>
+            <h3>Monthly Payroll Worklist</h3>
+            <div class="pay-muted mt-1">
+                Salary records for {{ selected_period }}
+            </div>
+        </div>
+        <span class="pay-muted">{{ payrolls|length }} records</span>
+    </div>
+
+    <div class="pay-table-wrap">
+
+        <table class="pay-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Basic</th>
+                    <th>Allowances</th>
+                    <th>Deductions</th>
+                    <th>Net Salary</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for payroll in payrolls %}
+                <tr>
+                    <td>
+                        <div class="pay-employee">
+                            {{ payroll.first_name }} {{ payroll.last_name }}
+                        </div>
+                        <div class="pay-code">
+                            {{ payroll.employee_code }} ·
+                            {{ payroll.department_name or 'Unassigned' }}
+                        </div>
+                    </td>
+
+                    <td>₹{{ "%.2f"|format(payroll.basic_salary) }}</td>
+                    <td>₹{{ "%.2f"|format(payroll.allowances) }}</td>
+                    <td>₹{{ "%.2f"|format(payroll.deductions) }}</td>
+                    <td>
+                        <strong style="color:#17243b;">
+                            ₹{{ "%.2f"|format(payroll.net_salary) }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {% if payroll.payment_status == 'Paid' %}
+                            <span class="pay-status pay-paid">Paid</span>
+                        {% elif payroll.payment_status == 'Processed' %}
+                            <span class="pay-status pay-processed">Processed</span>
+                        {% elif payroll.payment_status == 'On Hold' %}
+                            <span class="pay-status pay-hold">On Hold</span>
+                        {% else %}
+                            <span class="pay-status pay-draft">Draft</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="pay-empty">
+                            <i class="bi bi-wallet2 fs-3 d-block mb-2"></i>
+                            No payroll records found for {{ selected_period }}.
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+const basicInput = document.getElementById("basicSalary");
+const allowanceInput = document.getElementById("allowances");
+const deductionInput = document.getElementById("deductions");
+const preview = document.getElementById("netSalaryPreview");
+
+function updateNetSalary() {
+    const basic = Number(basicInput?.value || 0);
+    const allowances = Number(allowanceInput?.value || 0);
+    const deductions = Number(deductionInput?.value || 0);
+
+    const net = basic + allowances - deductions;
+
+    preview.textContent = "₹" + net.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    preview.style.color = net < 0 ? "#c45c4d" : "#1267b5";
+}
+
+[basicInput, allowanceInput, deductionInput].forEach(input => {
+    input?.addEventListener("input", updateNetSalary);
+});
+
+</script>
+{% endblock %}

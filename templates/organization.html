@@ -1,0 +1,299 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.org-heading {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px; margin-bottom:24px;
+}
+.org-heading h1 {
+    font-size:25px; font-weight:750; color:#17243b; margin:0 0 6px;
+}
+.org-muted { color:#8793a5; font-size:12px; }
+.org-kpis {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:15px; margin-bottom:22px;
+}
+.org-kpi,.org-panel,.department-card {
+    background:white; border:1px solid #e9edf3; border-radius:12px;
+}
+.org-kpi { padding:18px 20px; }
+.org-kpi span { color:#8793a5; font-size:10px; font-weight:650; }
+.org-kpi strong {
+    display:block; color:#17243b; font-size:27px;
+    font-weight:750; margin-top:8px;
+}
+.org-section-heading {
+    display:flex; justify-content:space-between;
+    align-items:center; gap:12px; margin:25px 0 14px;
+}
+.org-section-heading h2 {
+    color:#26364e; font-size:15px; font-weight:700; margin:0;
+}
+.org-department-grid {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:15px;
+}
+.department-card { padding:18px; }
+.department-top {
+    display:flex; justify-content:space-between;
+    align-items:center; gap:10px; margin-bottom:19px;
+}
+.department-icon {
+    width:39px; height:39px; border-radius:10px;
+    display:grid; place-items:center;
+    background:#edf4ff; color:#2675c8; font-size:18px;
+}
+.department-card h3 {
+    color:#26364e; font-size:13px; font-weight:700; margin:0 0 5px;
+}
+.department-count {
+    color:#17243b; font-size:27px; font-weight:750;
+}
+.department-caption { color:#9aa5b5; font-size:10px; }
+.org-progress {
+    height:7px; border-radius:20px; overflow:hidden;
+    background:#edf1f6; margin-top:13px;
+}
+.org-progress-fill {
+    height:100%; background:#3985cb; border-radius:20px;
+}
+.org-panel { overflow:hidden; margin-top:24px; }
+.org-panel-header {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px; padding:18px 20px;
+    border-bottom:1px solid #edf0f5;
+}
+.org-panel-header h3 {
+    color:#26364e; font-size:14px; font-weight:700; margin:0;
+}
+.org-search {
+    border:1px solid #e2e8f0; border-radius:7px;
+    padding:9px 11px; font-size:11px; color:#526178;
+    min-width:220px;
+}
+.org-table-wrap { overflow-x:auto; }
+.org-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.org-table th {
+    background:#fafbfd; color:#8793a5; font-size:10px;
+    letter-spacing:.4px; text-transform:uppercase;
+    padding:13px 17px; text-align:left;
+}
+.org-table td {
+    border-top:1px solid #f0f2f6; padding:14px 17px;
+    color:#53627a; font-size:11px;
+}
+.org-employee-name { color:#26364e; font-weight:650; }
+.org-employee-code { color:#98a3b2; font-size:10px; margin-top:3px; }
+.org-status {
+    display:inline-block; padding:5px 9px;
+    border-radius:20px; font-size:10px; font-weight:650;
+}
+.org-active { background:#e8f7ef; color:#208354; }
+.org-inactive { background:#fff0ed; color:#c45c4d; }
+.org-empty { text-align:center; color:#96a1b0; padding:35px 15px; font-size:12px; }
+@media(max-width:950px) {
+    .org-department-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:650px) {
+    .org-kpis { grid-template-columns:1fr; }
+    .org-department-grid { grid-template-columns:1fr; }
+    .org-search { min-width:100%; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="org-heading">
+    <div>
+        <div class="org-muted mb-2">HOME / ORGANISATION / STRUCTURE</div>
+        <h1>Organisation Structure</h1>
+        <div class="org-muted">
+            Explore departments and employee assignments across the organisation.
+        </div>
+    </div>
+</div>
+
+
+<!-- ORGANISATION SUMMARY -->
+<div class="org-kpis">
+
+    <div class="org-kpi">
+        <span>TOTAL DEPARTMENTS</span>
+        <strong>{{ total_departments }}</strong>
+    </div>
+
+    <div class="org-kpi">
+        <span>TOTAL EMPLOYEES</span>
+        <strong>{{ total_employees }}</strong>
+    </div>
+
+    <div class="org-kpi">
+        <span>ACTIVE WORKFORCE</span>
+        <strong>{{ active_employees }}</strong>
+    </div>
+
+</div>
+
+
+<!-- DEPARTMENT CARDS -->
+<div class="org-section-heading">
+    <div>
+        <h2>Department Overview</h2>
+        <div class="org-muted mt-1">
+            Employee headcount by department
+        </div>
+    </div>
+    <span class="org-muted">{{ total_departments }} departments</span>
+</div>
+
+
+<div class="org-department-grid">
+
+    {% for department in departments %}
+
+    <div class="department-card">
+
+        <div class="department-top">
+            <div class="department-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <span class="org-muted">
+                DEPT-{{ "%03d"|format(department.department_id) }}
+            </span>
+        </div>
+
+        <h3>{{ department.department_name }}</h3>
+
+        <div class="d-flex justify-content-between align-items-end mt-3">
+            <div>
+                <div class="department-count">
+                    {{ department.total_employees }}
+                </div>
+                <div class="department-caption">Total employees</div>
+            </div>
+
+            <div class="text-end">
+                <div class="fw-semibold text-success">
+                    {{ department.active_employees }}
+                </div>
+                <div class="department-caption">Active</div>
+            </div>
+        </div>
+
+        <div class="org-progress">
+            <div class="org-progress-fill"
+                 style="width:{{ department.workforce_percentage }}%">
+            </div>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="department-card org-empty">
+        No departments are configured yet.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- EMPLOYEE ASSIGNMENT REGISTER -->
+<div class="org-panel">
+
+    <div class="org-panel-header">
+        <div>
+            <h3>Employee Assignment Register</h3>
+            <div class="org-muted mt-1">
+                Employee-to-department mapping
+            </div>
+        </div>
+
+        <input type="text" id="orgSearch" class="org-search"
+               placeholder="Search employee or department...">
+    </div>
+
+    <div class="org-table-wrap">
+
+        <table class="org-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Employment Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="orgTableBody">
+
+                {% for employee in employees %}
+
+                <tr data-search="{{ employee.first_name }} {{ employee.last_name }} {{ employee.employee_code }} {{ employee.designation or '' }} {{ employee.department_name or '' }}">
+
+                    <td>
+                        <div class="org-employee-name">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                        </div>
+                        <div class="org-employee-code">
+                            {{ employee.employee_code }}
+                        </div>
+                    </td>
+
+                    <td>{{ employee.designation or '—' }}</td>
+
+                    <td>{{ employee.department_name or 'Unassigned' }}</td>
+
+                    <td>
+                        {% if employee.employment_status == 'Active' %}
+                            <span class="org-status org-active">Active</span>
+                        {% else %}
+                            <span class="org-status org-inactive">
+                                {{ employee.employment_status or 'Inactive' }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="4">
+                        <div class="org-empty">
+                            No employee assignments found.
+                        </div>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+const orgSearch = document.getElementById("orgSearch");
+
+orgSearch.addEventListener("input", function() {
+    const term = this.value.toLowerCase().trim();
+
+    document.querySelectorAll("#orgTableBody tr[data-search]").forEach(row => {
+        row.style.display = row.dataset.search.toLowerCase().includes(term)
+            ? ""
+            : "none";
+    });
+});
+</script>
+{% endblock %}

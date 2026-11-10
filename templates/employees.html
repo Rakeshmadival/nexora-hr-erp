@@ -1,0 +1,1048 @@
+
+{% extends "base.html" %}
+
+{% block title %}People Workspace | NEXORA{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ==================================================
+   NEXORA PEOPLE WORKSPACE
+================================================== */
+
+.ppl-page {
+    display: grid;
+    gap: 23px;
+    color: #17243b;
+}
+
+/* PAGE HERO */
+
+.ppl-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 27px 29px;
+    border-radius: 15px;
+    color: white;
+    background:
+        radial-gradient(circle at 88% 15%, rgba(104,176,255,.25), transparent 28%),
+        linear-gradient(115deg, #132747 0%, #1a3a65 58%, #15558b 100%);
+    box-shadow: 0 12px 30px rgba(22,53,91,.13);
+}
+
+.ppl-hero::after {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    right: 8%;
+    top: -160px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 24px rgba(255,255,255,.025),
+        0 0 0 52px rgba(255,255,255,.025),
+        0 0 0 82px rgba(255,255,255,.02);
+    pointer-events: none;
+}
+
+.ppl-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.ppl-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #b8d9ff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 13px;
+}
+
+.ppl-eyebrow i {
+    font-size: 13px;
+}
+
+.ppl-hero h1 {
+    color: white;
+    font-size: clamp(25px,3vw,34px);
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+.ppl-hero p {
+    color: #c3d4e9;
+    font-size: 11px;
+    line-height: 1.8;
+    margin: 10px 0 0;
+    max-width: 510px;
+}
+
+.ppl-hero-action {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.ppl-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: white;
+    color: #15558b;
+    border: 1px solid white;
+    border-radius: 8px;
+    padding: 12px 17px;
+    font-size: 10px;
+    font-weight: 750;
+    transition: .2s ease;
+    white-space: nowrap;
+}
+
+.ppl-add-btn:hover {
+    color: #10436e;
+    background: #eaf4ff;
+    transform: translateY(-2px);
+}
+
+/* SUMMARY STRIP */
+
+.ppl-metrics {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 13px;
+}
+
+.ppl-metric {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    border: 1px solid #e4eaf2;
+    border-radius: 11px;
+    padding: 17px 19px;
+    box-shadow: 0 2px 8px rgba(16,35,66,.035);
+}
+
+.ppl-metric-icon {
+    width: 41px;
+    height: 41px;
+    min-width: 41px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    font-size: 17px;
+}
+
+.ppl-metric-icon.total {
+    background: #eaf3ff;
+    color: #176fc0;
+}
+
+.ppl-metric-icon.active {
+    background: #e7f6ee;
+    color: #16845a;
+}
+
+.ppl-metric-icon.inactive {
+    background: #fff3e2;
+    color: #b87519;
+}
+
+.ppl-metric-label {
+    color: #8090a5;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .55px;
+    text-transform: uppercase;
+}
+
+.ppl-metric-value {
+    display: block;
+    color: #17243b;
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 750;
+    margin-top: 3px;
+}
+
+/* DIRECTORY SECTION */
+
+.ppl-directory {
+    background: white;
+    border: 1px solid #e4eaf2;
+    border-radius: 13px;
+    box-shadow: 0 2px 9px rgba(16,35,66,.035);
+    overflow: hidden;
+}
+
+.ppl-directory-heading {
+    padding: 19px 21px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.ppl-directory-heading h2 {
+    font-size: 14px;
+    font-weight: 750;
+    color: #20334e;
+    margin: 0;
+}
+
+.ppl-directory-heading p {
+    color: #8997aa;
+    font-size: 10px;
+    margin: 5px 0 0;
+}
+
+.ppl-count {
+    padding: 6px 10px;
+    background: #eff5fc;
+    color: #356a9d;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* FILTER TOOLBAR */
+
+.ppl-toolbar {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: #fafbfd;
+    border-top: 1px solid #edf1f6;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.ppl-tabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.ppl-tab {
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: #75849a;
+    font-size: 10px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: .18s;
+}
+
+.ppl-tab:hover {
+    background: #eef4fb;
+    color: #1d68a8;
+}
+
+.ppl-tab.active {
+    background: #e9f3ff;
+    border-color: #d1e4f8;
+    color: #086bb8;
+}
+
+.ppl-filters {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 240px;
+}
+
+.ppl-search {
+    position: relative;
+    width: min(300px,100%);
+}
+
+.ppl-search i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b99ac;
+}
+
+.ppl-search input,
+.ppl-department {
+    width: 100%;
+    height: 37px;
+    border: 1px solid #e0e7ef;
+    border-radius: 7px;
+    background: white;
+    color: #34465e;
+    outline: none;
+    font-family: inherit;
+    font-size: 10px;
+}
+
+.ppl-search input {
+    padding: 0 12px 0 35px;
+}
+
+.ppl-department {
+    width: 165px;
+    padding: 0 9px;
+}
+
+.ppl-search input:focus,
+.ppl-department:focus {
+    border-color: #82b6e6;
+    box-shadow: 0 0 0 3px rgba(8,117,209,.07);
+}
+
+.ppl-reset {
+    height: 37px;
+    padding: 0 11px;
+    border: 1px solid #e0e7ef;
+    border-radius: 7px;
+    background: white;
+    color: #64758d;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.ppl-reset:hover {
+    color: #0875d1;
+    background: #f1f7ff;
+}
+
+/* EMPLOYEE CARDS */
+
+.ppl-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 13px;
+    padding: 19px;
+}
+
+.ppl-employee-card {
+    min-width: 0;
+    border: 1px solid #e5ebf2;
+    border-radius: 11px;
+    background: white;
+    padding: 17px;
+    transition: border-color .2s ease,
+                box-shadow .2s ease,
+                transform .2s ease;
+}
+
+.ppl-employee-card:hover {
+    border-color: #bfd8f1;
+    box-shadow: 0 8px 23px rgba(25,73,119,.075);
+    transform: translateY(-2px);
+}
+
+.ppl-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.ppl-person {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.ppl-avatar {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #1e6eb2;
+    background: linear-gradient(145deg,#e8f3ff,#dcecff);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.ppl-person-info {
+    min-width: 0;
+}
+
+.ppl-person-info h3 {
+    margin: 0;
+    color: #233751;
+    font-size: 12px;
+    font-weight: 750;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ppl-person-info p {
+    color: #8694a8;
+    font-size: 9px;
+    margin: 5px 0 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ppl-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 20px;
+    padding: 5px 8px;
+    font-size: 8px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.ppl-state::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.ppl-state.active {
+    color: #16845a;
+    background: #e8f6ef;
+}
+
+.ppl-state.inactive {
+    color: #a86a13;
+    background: #fff4df;
+}
+
+/* CARD DETAILS */
+
+.ppl-card-divider {
+    height: 1px;
+    background: #edf1f6;
+    margin: 16px 0 13px;
+}
+
+.ppl-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 12px;
+}
+
+.ppl-detail {
+    min-width: 0;
+}
+
+.ppl-detail-label {
+    display: block;
+    color: #97a3b3;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.ppl-detail-value {
+    display: block;
+    color: #40536d;
+    font-size: 10px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.ppl-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #edf1f6;
+}
+
+.ppl-employee-code {
+    color: #8795a9;
+    font-size: 9px;
+    font-weight: 650;
+}
+
+.ppl-card-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d9e8f6;
+    border-radius: 7px;
+    color: #176db4;
+    background: #f4f9ff;
+    font-size: 9px;
+    font-weight: 700;
+    transition: .18s;
+}
+
+.ppl-card-action:hover {
+    color: white;
+    background: #0875d1;
+    border-color: #0875d1;
+}
+
+/* EMPTY STATES */
+
+.ppl-empty {
+    grid-column: 1/-1;
+    padding: 55px 20px;
+    text-align: center;
+    color: #8a98ac;
+}
+
+.ppl-empty i {
+    display: block;
+    font-size: 34px;
+    color: #a9bbce;
+    margin-bottom: 13px;
+}
+
+.ppl-empty strong {
+    display: block;
+    color: #43556e;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.ppl-empty span {
+    display: block;
+    font-size: 10px;
+}
+
+.ppl-directory-footer {
+    padding: 12px 20px;
+    background: #fafbfd;
+    border-top: 1px solid #edf1f6;
+    color: #8997aa;
+    font-size: 9px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 1050px) {
+    .ppl-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 700px) {
+    .ppl-hero {
+        padding: 23px 19px;
+    }
+
+    .ppl-hero-content {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ppl-metrics {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .ppl-toolbar {
+        align-items: stretch;
+    }
+
+    .ppl-tabs {
+        width: 100%;
+    }
+
+    .ppl-filters {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .ppl-search {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+    .ppl-department {
+        flex: 1;
+    }
+
+    .ppl-card-grid {
+        padding: 12px;
+    }
+}
+
+@media(max-width: 420px) {
+    .ppl-details {
+        grid-template-columns: 1fr;
+    }
+
+    .ppl-count {
+        display: none;
+    }
+
+    .ppl-person-info h3 {
+        font-size: 11px;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+{% set ns = namespace(active=0, inactive=0) %}
+
+{% for employee in employees %}
+    {% if employee.employment_status == 'Active' %}
+        {% set ns.active = ns.active + 1 %}
+    {% else %}
+        {% set ns.inactive = ns.inactive + 1 %}
+    {% endif %}
+{% endfor %}
+
+
+<div class="ppl-page">
+
+    <!-- PEOPLE WORKSPACE HERO -->
+
+    <section class="ppl-hero">
+
+        <div class="ppl-hero-content">
+
+            <div>
+                <div class="ppl-eyebrow">
+                    <i class="bi bi-people-fill"></i>
+                    PEOPLE MANAGEMENT / WORKFORCE
+                </div>
+
+                <h1>People Workspace</h1>
+
+                <p>
+                    Your organisation's people, connected in one place.
+                    Explore employee profiles, assignments and workforce information.
+                </p>
+            </div>
+
+            {% if session.get('role') == 'HR Admin' %}
+            <div class="ppl-hero-action">
+                <a href="{{ url_for('add_employee') }}" class="ppl-add-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add New Employee
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- WORKFORCE PULSE -->
+
+    <section class="ppl-metrics">
+
+        <article class="ppl-metric">
+            <div class="ppl-metric-icon total">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div>
+                <div class="ppl-metric-label">Total Workforce</div>
+                <strong class="ppl-metric-value">{{ employees|length }}</strong>
+            </div>
+        </article>
+
+
+        <article class="ppl-metric">
+            <div class="ppl-metric-icon active">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+
+            <div>
+                <div class="ppl-metric-label">Active Employees</div>
+                <strong class="ppl-metric-value">{{ ns.active }}</strong>
+            </div>
+        </article>
+
+
+        <article class="ppl-metric">
+            <div class="ppl-metric-icon inactive">
+                <i class="bi bi-person-dash-fill"></i>
+            </div>
+
+            <div>
+                <div class="ppl-metric-label">Inactive Employees</div>
+                <strong class="ppl-metric-value">{{ ns.inactive }}</strong>
+            </div>
+        </article>
+
+    </section>
+
+
+    <!-- DIRECTORY -->
+
+    <section class="ppl-directory">
+
+        <header class="ppl-directory-heading">
+
+            <div>
+                <h2>Employee Profiles</h2>
+                <p>
+                    Browse your workforce and access employee information.
+                </p>
+            </div>
+
+            <span class="ppl-count">
+                <span id="pplVisibleCount">{{ employees|length }}</span>
+                RECORDS
+            </span>
+
+        </header>
+
+
+        <!-- INTERACTIVE FILTER BAR -->
+
+        <div class="ppl-toolbar">
+
+            <div class="ppl-tabs">
+
+                <button type="button"
+                        class="ppl-tab active"
+                        data-filter="all">
+                    All Employees
+                </button>
+
+                <button type="button"
+                        class="ppl-tab"
+                        data-filter="active">
+                    Active
+                </button>
+
+                <button type="button"
+                        class="ppl-tab"
+                        data-filter="inactive">
+                    Inactive
+                </button>
+
+            </div>
+
+
+            <div class="ppl-filters">
+
+                <div class="ppl-search">
+                    <i class="bi bi-search"></i>
+
+                    <input type="search"
+                           id="pplSearch"
+                           placeholder="Find a person..."
+                           aria-label="Search employee profiles">
+                </div>
+
+
+                <select id="pplDepartment"
+                        class="ppl-department"
+                        aria-label="Filter by department">
+
+                    <option value="">All Departments</option>
+
+                    {% for department in employees|map(attribute='department_name')|reject('none')|unique|sort %}
+                        <option value="{{ department|lower }}">
+                            {{ department }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+
+                <button type="button"
+                        class="ppl-reset"
+                        id="pplReset"
+                        title="Reset filters">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROFILE CARD GRID -->
+
+        <div class="ppl-card-grid" id="pplCardGrid">
+
+            {% for employee in employees %}
+
+            <article class="ppl-employee-card"
+                     data-status="{{ employee.employment_status|lower }}"
+                     data-department="{{ (employee.department_name or '')|lower }}">
+
+                <!-- PERSON -->
+
+                <div class="ppl-card-top">
+
+                    <div class="ppl-person">
+
+                        <div class="ppl-avatar">
+                            {{ employee.first_name[0]|upper }}{{ employee.last_name[0]|upper if employee.last_name else '' }}
+                        </div>
+
+                        <div class="ppl-person-info">
+
+                            <h3>
+                                {{ employee.first_name }}
+                                {{ employee.last_name or '' }}
+                            </h3>
+
+                            <p>
+                                {{ employee.designation or 'Employee' }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if employee.employment_status == 'Active' %}
+
+                        <span class="ppl-state active">Active</span>
+
+                    {% else %}
+
+                        <span class="ppl-state inactive">
+                            {{ employee.employment_status or 'Unknown' }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="ppl-card-divider"></div>
+
+
+                <!-- EMPLOYEE INFORMATION -->
+
+                <div class="ppl-details">
+
+                    <div class="ppl-detail">
+                        <span class="ppl-detail-label">Department</span>
+                        <span class="ppl-detail-value">
+                            {{ employee.department_name or 'Unassigned' }}
+                        </span>
+                    </div>
+
+                    <div class="ppl-detail">
+                        <span class="ppl-detail-label">Employee Code</span>
+                        <span class="ppl-detail-value">
+                            {{ employee.employee_code }}
+                        </span>
+                    </div>
+
+                    <div class="ppl-detail">
+                        <span class="ppl-detail-label">Email Address</span>
+                        <span class="ppl-detail-value">
+                            {{ employee.email or 'Not provided' }}
+                        </span>
+                    </div>
+
+                    <div class="ppl-detail">
+                        <span class="ppl-detail-label">Joining Date</span>
+                        <span class="ppl-detail-value">
+                            {{ employee.joining_date.strftime('%d %b %Y') if employee.joining_date else 'Not recorded' }}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <!-- CARD FOOTER -->
+
+                <div class="ppl-card-footer">
+
+                    <span class="ppl-employee-code">
+                        EMPLOYEE ID · {{ employee.employee_id }}
+                    </span>
+
+                    {% if session.get('role') == 'HR Admin' %}
+
+                    <a href="{{ url_for('edit_employee', employee_id=employee.employee_id) }}"
+                       class="ppl-card-action">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Profile
+                    </a>
+
+                    {% else %}
+
+                    <span class="ppl-employee-code">
+                        Workforce Record
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </article>
+
+            {% else %}
+
+            <div class="ppl-empty" id="pplEmpty">
+                <i class="bi bi-people"></i>
+                <strong>Your workforce starts here</strong>
+                <span>No employee profiles have been registered yet.</span>
+            </div>
+
+            {% endfor %}
+
+
+            <!-- FILTER EMPTY STATE -->
+
+            {% if employees %}
+            <div class="ppl-empty" id="pplNoResults" hidden>
+                <i class="bi bi-search"></i>
+                <strong>No matching employee profiles</strong>
+                <span>Try adjusting your search or department filter.</span>
+            </div>
+            {% endif %}
+
+        </div>
+
+
+        <footer class="ppl-directory-footer">
+            <i class="bi bi-database-check me-1"></i>
+            Employee profiles are retrieved from the NEXORA workforce database.
+        </footer>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+(() => {
+
+    const cards = Array.from(
+        document.querySelectorAll(".ppl-employee-card")
+    );
+
+    const search = document.getElementById("pplSearch");
+    const department = document.getElementById("pplDepartment");
+    const reset = document.getElementById("pplReset");
+    const tabs = Array.from(
+        document.querySelectorAll(".ppl-tab")
+    );
+
+    const count = document.getElementById("pplVisibleCount");
+    const noResults = document.getElementById("pplNoResults");
+
+    let activeStatus = "all";
+
+    function applyFilters() {
+
+        const term = search.value.trim().toLowerCase();
+        const selectedDepartment = department.value.toLowerCase();
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            const text = card.textContent.toLowerCase();
+            const cardStatus = card.dataset.status || "";
+            const cardDepartment = card.dataset.department || "";
+
+            const matchesText = text.includes(term);
+
+            const matchesDepartment =
+                !selectedDepartment ||
+                cardDepartment === selectedDepartment;
+
+            const matchesStatus =
+                activeStatus === "all" ||
+                cardStatus === activeStatus;
+
+            const show =
+                matchesText &&
+                matchesDepartment &&
+                matchesStatus;
+
+            card.hidden = !show;
+
+            if (show) {
+                visible++;
+            }
+
+        });
+
+        count.textContent = visible;
+
+        if (noResults) {
+            noResults.hidden = !(cards.length > 0 && visible === 0);
+        }
+
+    }
+
+
+    tabs.forEach(tab => {
+
+        tab.addEventListener("click", () => {
+
+            activeStatus = tab.dataset.filter;
+
+            tabs.forEach(item => {
+                item.classList.toggle("active", item === tab);
+            });
+
+            applyFilters();
+
+        });
+
+    });
+
+
+    search.addEventListener("input", applyFilters);
+    department.addEventListener("change", applyFilters);
+
+
+    reset.addEventListener("click", () => {
+
+        search.value = "";
+        department.value = "";
+        activeStatus = "all";
+
+        tabs.forEach(tab => {
+            tab.classList.toggle(
+                "active",
+                tab.dataset.filter === "all"
+            );
+        });
+
+        applyFilters();
+
+    });
+
+
+    applyFilters();
+
+})();
+</script>
+
+{% endblock %}

@@ -1,0 +1,389 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.report-heading {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:15px; margin-bottom:24px;
+}
+.report-heading h1 {
+    color:#17243b; font-size:25px; font-weight:750; margin:0 0 6px;
+}
+.report-muted { color:#8793a5; font-size:12px; }
+.report-filter { display:flex; gap:8px; align-items:center; }
+.report-filter input {
+    padding:9px 11px; border:1px solid #e2e8f0;
+    border-radius:7px; font-size:12px; color:#526178;
+}
+.report-btn {
+    background:#0875d1; color:white; border:0;
+    border-radius:7px; padding:10px 15px;
+    font-size:11px; font-weight:650;
+}
+.report-kpis {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px; margin-bottom:21px;
+}
+.report-card,.report-panel {
+    background:white; border:1px solid #e9edf3; border-radius:12px;
+}
+.report-card { padding:18px; }
+.report-card-label {
+    color:#8793a5; font-size:10px; font-weight:650;
+}
+.report-card-value {
+    color:#17243b; font-size:27px; font-weight:750; margin-top:9px;
+}
+.report-card-note { color:#9aa5b5; font-size:10px; margin-top:5px; }
+.report-grid {
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px; margin-bottom:20px;
+}
+.report-panel { overflow:hidden; }
+.report-panel-header {
+    padding:17px 20px; border-bottom:1px solid #edf0f5;
+}
+.report-panel-header h3 {
+    color:#26364e; font-size:13px; font-weight:700; margin:0;
+}
+.report-panel-header p {
+    color:#9aa5b5; font-size:10px; margin:5px 0 0;
+}
+.report-panel-body { padding:20px; }
+.report-row { margin-bottom:19px; }
+.report-row:last-child { margin-bottom:0; }
+.report-row-label {
+    display:flex; justify-content:space-between; gap:10px;
+    color:#53627a; font-size:11px; margin-bottom:8px;
+}
+.report-row-label strong { color:#26364e; }
+.report-track {
+    height:8px; background:#edf1f6; border-radius:20px; overflow:hidden;
+}
+.report-fill { height:100%; border-radius:20px; background:#3985cb; }
+.report-fill.green { background:#26966a; }
+.report-fill.orange { background:#e7a24a; }
+.report-fill.red { background:#d66c60; }
+.report-fill.purple { background:#9275d8; }
+.report-empty { color:#9aa5b5; font-size:12px; text-align:center; padding:22px 8px; }
+.report-total {
+    font-size:27px; font-weight:750; color:#17243b; margin-bottom:4px;
+}
+.report-total-caption { color:#9aa5b5; font-size:11px; margin-bottom:20px; }
+.report-financial-row {
+    display:flex; justify-content:space-between;
+    padding:12px 0; border-bottom:1px solid #f0f2f6;
+    color:#64738a; font-size:11px;
+}
+.report-financial-row:last-child { border-bottom:0; }
+.report-financial-row strong { color:#26364e; }
+.report-note {
+    padding:13px 16px; border-radius:8px;
+    background:#f5f8fc; color:#75849a;
+    font-size:10px; line-height:1.6; margin-top:18px;
+}
+@media(max-width:900px) {
+    .report-kpis { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:650px) {
+    .report-grid { grid-template-columns:1fr; }
+}
+@media(max-width:430px) {
+    .report-kpis { grid-template-columns:1fr; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="report-heading">
+    <div>
+        <div class="report-muted mb-2">HOME / ANALYTICS / REPORTS</div>
+        <h1>Reports & Analytics</h1>
+        <div class="report-muted">
+            Organisation-wide HR performance and workforce insights.
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('hr_reports') }}"
+          class="report-filter">
+        <input type="month" name="period"
+               value="{{ selected_period }}" required>
+        <button type="submit" class="report-btn">
+            <i class="bi bi-funnel me-1"></i> Apply
+        </button>
+    </form>
+</div>
+
+
+<!-- KPI SUMMARY -->
+<div class="report-kpis">
+
+    <div class="report-card">
+        <div class="report-card-label">TOTAL WORKFORCE</div>
+        <div class="report-card-value">{{ total_employees }}</div>
+        <div class="report-card-note">All employee records</div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-card-label">ACTIVE EMPLOYEES</div>
+        <div class="report-card-value">{{ active_employees }}</div>
+        <div class="report-card-note">Currently active workforce</div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-card-label">LEAVE REQUESTS</div>
+        <div class="report-card-value">{{ total_leaves }}</div>
+        <div class="report-card-note">Applications in selected month</div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-card-label">MONTHLY NET PAYROLL</div>
+        <div class="report-card-value" style="font-size:21px;">
+            ₹{{ "%.2f"|format(payroll_summary.net_total) }}
+        </div>
+        <div class="report-card-note">Payroll records for {{ selected_period }}</div>
+    </div>
+
+</div>
+
+
+<!-- DEPARTMENT DISTRIBUTION + EMPLOYEE STATUS -->
+<div class="report-grid">
+
+    <div class="report-panel">
+        <div class="report-panel-header">
+            <h3>Department Workforce Distribution</h3>
+            <p>Employee count across departments</p>
+        </div>
+
+        <div class="report-panel-body">
+
+            {% for department in department_stats %}
+            <div class="report-row">
+
+                <div class="report-row-label">
+                    <span>{{ department.department_name }}</span>
+                    <strong>{{ department.employee_count }}</strong>
+                </div>
+
+                <div class="report-track">
+                    <div class="report-fill"
+                         style="width:{{ department.percentage }}%">
+                    </div>
+                </div>
+
+            </div>
+            {% else %}
+            <div class="report-empty">No department records found.</div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    <div class="report-panel">
+        <div class="report-panel-header">
+            <h3>Employment Status</h3>
+            <p>Current employee record distribution</p>
+        </div>
+
+        <div class="report-panel-body">
+
+            {% set active_pct = (active_employees / total_employees * 100)|round|int if total_employees else 0 %}
+            {% set inactive_pct = (inactive_employees / total_employees * 100)|round|int if total_employees else 0 %}
+
+            <div class="report-total">{{ total_employees }}</div>
+            <div class="report-total-caption">Total registered employees</div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Active employees</span>
+                    <strong>{{ active_employees }} ({{ active_pct }}%)</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill green" style="width:{{ active_pct }}%"></div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Inactive employees</span>
+                    <strong>{{ inactive_employees }} ({{ inactive_pct }}%)</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill orange" style="width:{{ inactive_pct }}%"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ATTENDANCE + LEAVE -->
+<div class="report-grid">
+
+    <div class="report-panel">
+        <div class="report-panel-header">
+            <h3>Attendance Overview</h3>
+            <p>Attendance records for {{ selected_period }}</p>
+        </div>
+
+        <div class="report-panel-body">
+
+            {% set attendance_total = present_count + absent_count + half_day_count + on_leave_count %}
+
+            <div class="report-total">{{ attendance_total }}</div>
+            <div class="report-total-caption">Total attendance entries</div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Present</span><strong>{{ present_count }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill green"
+                         style="width:{{ (present_count / attendance_total * 100) if attendance_total else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Absent</span><strong>{{ absent_count }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill red"
+                         style="width:{{ (absent_count / attendance_total * 100) if attendance_total else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Half Day</span><strong>{{ half_day_count }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill orange"
+                         style="width:{{ (half_day_count / attendance_total * 100) if attendance_total else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>On Leave</span><strong>{{ on_leave_count }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill purple"
+                         style="width:{{ (on_leave_count / attendance_total * 100) if attendance_total else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="report-panel">
+        <div class="report-panel-header">
+            <h3>Leave Management Overview</h3>
+            <p>Leave application status in {{ selected_period }}</p>
+        </div>
+
+        <div class="report-panel-body">
+
+            <div class="report-total">{{ total_leaves }}</div>
+            <div class="report-total-caption">Total leave applications</div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Pending approval</span>
+                    <strong>{{ pending_leaves }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill orange"
+                         style="width:{{ (pending_leaves / total_leaves * 100) if total_leaves else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Approved</span>
+                    <strong>{{ approved_leaves }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill green"
+                         style="width:{{ (approved_leaves / total_leaves * 100) if total_leaves else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-row">
+                <div class="report-row-label">
+                    <span>Rejected</span>
+                    <strong>{{ rejected_leaves }}</strong>
+                </div>
+                <div class="report-track">
+                    <div class="report-fill red"
+                         style="width:{{ (rejected_leaves / total_leaves * 100) if total_leaves else 0 }}%">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- PAYROLL FINANCIAL SUMMARY -->
+<div class="report-panel">
+
+    <div class="report-panel-header">
+        <h3>Payroll Financial Summary</h3>
+        <p>Salary component breakdown for {{ selected_period }}</p>
+    </div>
+
+    <div class="report-panel-body">
+
+        <div class="report-financial-row">
+            <span>Payroll records</span>
+            <strong>{{ payroll_summary.record_count }}</strong>
+        </div>
+
+        <div class="report-financial-row">
+            <span>Total basic salary</span>
+            <strong>₹{{ "%.2f"|format(payroll_summary.basic_total) }}</strong>
+        </div>
+
+        <div class="report-financial-row">
+            <span>Total allowances</span>
+            <strong>₹{{ "%.2f"|format(payroll_summary.allowances_total) }}</strong>
+        </div>
+
+        <div class="report-financial-row">
+            <span>Total deductions</span>
+            <strong>₹{{ "%.2f"|format(payroll_summary.deductions_total) }}</strong>
+        </div>
+
+        <div class="report-financial-row">
+            <span><strong>Total net payroll</strong></span>
+            <strong style="color:#0875d1;font-size:15px;">
+                ₹{{ "%.2f"|format(payroll_summary.net_total) }}
+            </strong>
+        </div>
+
+        <div class="report-note">
+            These figures are based on payroll records entered into NEXORA.
+            They are management summaries, not statutory payroll or tax calculations.
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

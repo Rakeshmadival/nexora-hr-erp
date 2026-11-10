@@ -1,0 +1,494 @@
+
+{% extends "base.html" %}
+
+{% block title %}Workforce Overview | NEXORA{% endblock %}
+
+{% block content %}
+
+<div class="nx-dashboard">
+
+    <!-- PAGE HEADER -->
+
+    <section class="nx-page-head">
+
+        <div>
+            <div class="nx-eyebrow">
+                HOME / WORKSPACE / OVERVIEW
+            </div>
+
+            <h1 class="nx-page-title">
+                Workforce Overview
+            </h1>
+
+            <p class="nx-page-subtitle">
+                Welcome back, {{ session.get('username', 'User') }}.
+                Here's your organisation at a glance.
+            </p>
+        </div>
+
+        <div class="nx-date-chip">
+            <i class="bi bi-calendar3"></i>
+            <span id="nxToday">Today</span>
+        </div>
+
+    </section>
+
+
+    <!-- CALCULATE METRICS -->
+
+    {% set total = metrics.total_employees or 0 %}
+    {% set active = metrics.active_employees or 0 %}
+    {% set inactive = metrics.inactive_employees or 0 %}
+    {% set departments = department_count.total_departments or 0 %}
+
+    {% set active_pct = ((active / total) * 100)|round|int if total else 0 %}
+    {% set inactive_pct = ((inactive / total) * 100)|round|int if total else 0 %}
+
+
+    <!-- KPI CARDS -->
+
+    <section class="nx-kpi-grid">
+
+        <article class="nx-kpi">
+
+            <div class="nx-kpi-top">
+                <span class="nx-kpi-label">Total employees</span>
+
+                <span class="nx-kpi-icon blue">
+                    <i class="bi bi-people-fill"></i>
+                </span>
+            </div>
+
+            <strong class="nx-kpi-value">
+                {{ total }}
+            </strong>
+
+            <div class="nx-kpi-note">
+                All registered employee records
+            </div>
+
+        </article>
+
+
+        <article class="nx-kpi">
+
+            <div class="nx-kpi-top">
+                <span class="nx-kpi-label">Active workforce</span>
+
+                <span class="nx-kpi-icon green">
+                    <i class="bi bi-person-check-fill"></i>
+                </span>
+            </div>
+
+            <strong class="nx-kpi-value">
+                {{ active }}
+            </strong>
+
+            <div class="nx-kpi-note">
+                Currently active employees
+            </div>
+
+        </article>
+
+
+        <article class="nx-kpi">
+
+            <div class="nx-kpi-top">
+                <span class="nx-kpi-label">Inactive records</span>
+
+                <span class="nx-kpi-icon amber">
+                    <i class="bi bi-person-dash-fill"></i>
+                </span>
+            </div>
+
+            <strong class="nx-kpi-value">
+                {{ inactive }}
+            </strong>
+
+            <div class="nx-kpi-note">
+                Employees marked inactive
+            </div>
+
+        </article>
+
+
+        <article class="nx-kpi">
+
+            <div class="nx-kpi-top">
+                <span class="nx-kpi-label">Departments</span>
+
+                <span class="nx-kpi-icon violet">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </span>
+            </div>
+
+            <strong class="nx-kpi-value">
+                {{ departments }}
+            </strong>
+
+            <div class="nx-kpi-note">
+                Organisational departments
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- WORKFORCE AND QUICK ACTIONS -->
+
+    <section class="nx-content-grid">
+
+        <!-- WORKFORCE SNAPSHOT -->
+
+        <article class="nx-panel">
+
+            <header class="nx-panel-head">
+
+                <div>
+                    <h2 class="nx-panel-title">
+                        Workforce Snapshot
+                    </h2>
+
+                    <p class="nx-panel-subtitle">
+                        Current employee status distribution
+                    </p>
+                </div>
+
+                <i class="bi bi-bar-chart-line"
+                   style="color:#8192aa;font-size:16px"></i>
+
+            </header>
+
+
+            <div class="nx-panel-body">
+
+                <div class="nx-workforce-total">
+                    <strong>{{ total }}</strong>
+                    <span>employee records in NEXORA</span>
+                </div>
+
+
+                <!-- ACTIVE WORKFORCE -->
+
+                <div class="nx-progress-row">
+
+                    <div class="nx-progress-meta">
+                        <span>Active employees</span>
+
+                        <strong>
+                            {{ active }} ({{ active_pct }}%)
+                        </strong>
+                    </div>
+
+                    <div class="nx-progress-track"
+                         role="progressbar"
+                         aria-valuenow="{{ active_pct }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+
+                        <div class="nx-progress-fill"
+                             style="width:{{ active_pct }}%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INACTIVE WORKFORCE -->
+
+                <div class="nx-progress-row">
+
+                    <div class="nx-progress-meta">
+                        <span>Inactive employees</span>
+
+                        <strong>
+                            {{ inactive }} ({{ inactive_pct }}%)
+                        </strong>
+                    </div>
+
+                    <div class="nx-progress-track"
+                         role="progressbar"
+                         aria-valuenow="{{ inactive_pct }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+
+                        <div class="nx-progress-fill inactive"
+                             style="width:{{ inactive_pct }}%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="nx-footer-note">
+                Figures are calculated from current employee records.
+            </div>
+
+        </article>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <article class="nx-panel">
+
+            <header class="nx-panel-head">
+
+                <div>
+                    <h2 class="nx-panel-title">
+                        Quick Actions
+                    </h2>
+
+                    <p class="nx-panel-subtitle">
+                        Shortcuts to frequently used HR operations
+                    </p>
+                </div>
+
+                <i class="bi bi-lightning-charge"
+                   style="color:#8192aa;font-size:16px"></i>
+
+            </header>
+
+
+            <div class="nx-panel-body">
+
+                <div class="nx-quick-list">
+
+                    {% if session.get('role') == 'HR Admin' %}
+
+                    <a class="nx-quick-link"
+                       href="{{ url_for('add_employee') }}">
+
+                        <span class="nx-quick-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </span>
+
+                        <span class="nx-quick-copy">
+                            <strong>Add New Employee</strong>
+                            <small>Create an employee record</small>
+                        </span>
+
+                        <i class="bi bi-arrow-right nx-quick-arrow"></i>
+
+                    </a>
+
+                    {% endif %}
+
+
+                    <a class="nx-quick-link"
+                       href="{{ url_for('employees') }}">
+
+                        <span class="nx-quick-icon">
+                            <i class="bi bi-people"></i>
+                        </span>
+
+                        <span class="nx-quick-copy">
+                            <strong>Employee Directory</strong>
+                            <small>View employee records</small>
+                        </span>
+
+                        <i class="bi bi-arrow-right nx-quick-arrow"></i>
+
+                    </a>
+
+
+                    <a class="nx-quick-link"
+                       href="{{ url_for('recruitment_management') }}">
+
+                        <span class="nx-quick-icon">
+                            <i class="bi bi-person-workspace"></i>
+                        </span>
+
+                        <span class="nx-quick-copy">
+                            <strong>Recruitment</strong>
+                            <small>Review jobs and candidates</small>
+                        </span>
+
+                        <i class="bi bi-arrow-right nx-quick-arrow"></i>
+
+                    </a>
+
+
+                    <a class="nx-quick-link"
+                       href="{{ url_for('onboarding_management') }}">
+
+                        <span class="nx-quick-icon">
+                            <i class="bi bi-person-check"></i>
+                        </span>
+
+                        <span class="nx-quick-copy">
+                            <strong>Onboarding</strong>
+                            <small>Track induction tasks</small>
+                        </span>
+
+                        <i class="bi bi-arrow-right nx-quick-arrow"></i>
+
+                    </a>
+
+
+                    <a class="nx-quick-link"
+                       href="{{ url_for('hr_reports') }}">
+
+                        <span class="nx-quick-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </span>
+
+                        <span class="nx-quick-copy">
+                            <strong>HR Reports</strong>
+                            <small>Explore workforce insights</small>
+                        </span>
+
+                        <i class="bi bi-arrow-right nx-quick-arrow"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- RECENT EMPLOYEES -->
+
+    <section class="nx-panel">
+
+        <header class="nx-panel-head">
+
+            <div>
+                <h2 class="nx-panel-title">
+                    Recently Added Employees
+                </h2>
+
+                <p class="nx-panel-subtitle">
+                    The latest employee records in your organisation
+                </p>
+            </div>
+
+            <a class="nx-link"
+               href="{{ url_for('employees') }}">
+
+                View directory
+                <i class="bi bi-arrow-up-right"></i>
+
+            </a>
+
+        </header>
+
+
+        <div class="nx-table-wrap">
+
+            <table class="nx-table">
+
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Designation</th>
+                        <th>Department</th>
+                        <th>Employment Status</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for employee in recent_employees %}
+
+                    <tr>
+
+                        <td>
+                            <span class="nx-employee-name">
+                                {{ employee.first_name }}
+                                {{ employee.last_name }}
+                            </span>
+
+                            <span class="nx-employee-code">
+                                {{ employee.employee_code }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ employee.designation or '—' }}
+                        </td>
+
+                        <td>
+                            {{ employee.department_name or 'Unassigned' }}
+                        </td>
+
+                        <td>
+
+                            {% if employee.employment_status == 'Active' %}
+
+                                <span class="nx-status active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="nx-status inactive">
+                                    {{ employee.employment_status or 'Unknown' }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4">
+
+                            <div class="nx-empty">
+                                <i class="bi bi-people fs-4 d-block mb-2"></i>
+
+                                No employee records are available yet.
+                            </div>
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+(() => {
+
+    const dateNode = document.getElementById("nxToday");
+
+    if (dateNode) {
+
+        dateNode.textContent =
+            new Intl.DateTimeFormat("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }).format(new Date());
+
+    }
+
+})();
+</script>
+
+{% endblock %}

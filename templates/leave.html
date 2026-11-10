@@ -1,0 +1,330 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.leave-heading {
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px; margin-bottom:24px;
+}
+.leave-heading h1 {
+    font-size:25px; font-weight:750; color:#17243b; margin:0 0 6px;
+}
+.leave-muted { color:#8793a5; font-size:12px; }
+.leave-stats {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:16px; margin-bottom:22px;
+}
+.leave-stat,.leave-panel {
+    background:#fff; border:1px solid #e9edf3; border-radius:12px;
+}
+.leave-stat { padding:19px; }
+.leave-stat-label {
+    color:#8793a5; font-size:11px; font-weight:650;
+}
+.leave-stat-value {
+    color:#17243b; font-size:28px; font-weight:750; margin-top:8px;
+}
+.leave-panel { overflow:hidden; margin-bottom:22px; }
+.leave-panel-header {
+    padding:18px 21px; border-bottom:1px solid #edf0f5;
+    display:flex; justify-content:space-between; align-items:center;
+    gap:12px;
+}
+.leave-panel-header h3 {
+    color:#26364e; font-size:14px; font-weight:700; margin:0;
+}
+.leave-panel-body { padding:21px; }
+.leave-form-grid {
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px;
+}
+.leave-field label {
+    display:block; color:#526178; font-size:11px;
+    font-weight:650; margin-bottom:7px;
+}
+.leave-field input,.leave-field select,.leave-field textarea {
+    width:100%; border:1px solid #e2e8f0; border-radius:7px;
+    padding:10px 12px; font-size:12px; color:#33445d;
+    background:#fff; outline:none;
+}
+.leave-field input:focus,.leave-field select:focus,
+.leave-field textarea:focus {
+    border-color:#5a9ddd; box-shadow:0 0 0 3px #eaf3ff;
+}
+.leave-field textarea { min-height:76px; resize:vertical; }
+.leave-field.full { grid-column:1/-1; }
+.leave-submit {
+    background:#0875d1; color:white; border:0; border-radius:7px;
+    padding:10px 17px; font-size:12px; font-weight:650;
+}
+.leave-submit:hover { background:#0664b5; }
+.leave-table-wrap { overflow-x:auto; }
+.leave-table {
+    width:100%; border-collapse:collapse; white-space:nowrap;
+}
+.leave-table th {
+    background:#fafbfd; color:#8793a5; text-transform:uppercase;
+    font-size:10px; letter-spacing:.4px; padding:13px 16px;
+    text-align:left;
+}
+.leave-table td {
+    border-top:1px solid #f0f2f6; padding:14px 16px;
+    color:#53627a; font-size:11px;
+}
+.leave-employee { color:#26364e; font-weight:650; }
+.leave-code { color:#98a3b2; font-size:10px; margin-top:3px; }
+.leave-status {
+    display:inline-block; padding:5px 9px; border-radius:20px;
+    font-size:10px; font-weight:650;
+}
+.leave-pending { color:#a86a13; background:#fff4df; }
+.leave-approved { color:#208354; background:#e8f7ef; }
+.leave-rejected { color:#c45c4d; background:#fff0ed; }
+.leave-decision { display:flex; gap:6px; }
+.leave-decision button {
+    border:0; border-radius:6px; padding:7px 9px;
+    font-size:10px; font-weight:650;
+}
+.leave-approve { background:#e8f7ef; color:#208354; }
+.leave-reject { background:#fff0ed; color:#c45c4d; }
+.leave-empty { text-align:center; padding:38px 15px; color:#96a1b0; font-size:12px; }
+@media(max-width:650px) {
+    .leave-stats { grid-template-columns:1fr; }
+    .leave-form-grid { grid-template-columns:1fr; }
+    .leave-field.full { grid-column:auto; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="leave-heading">
+    <div>
+        <div class="leave-muted mb-2">HOME / PEOPLE / LEAVE MANAGEMENT</div>
+        <h1>Leave Management</h1>
+        <div class="leave-muted">
+            Review employee leave requests and manage approval decisions.
+        </div>
+    </div>
+</div>
+
+
+<!-- LEAVE KPI CARDS -->
+<div class="leave-stats">
+
+    <div class="leave-stat">
+        <div class="leave-stat-label">PENDING REQUESTS</div>
+        <div class="leave-stat-value">{{ pending_count }}</div>
+    </div>
+
+    <div class="leave-stat">
+        <div class="leave-stat-label">APPROVED REQUESTS</div>
+        <div class="leave-stat-value">{{ approved_count }}</div>
+    </div>
+
+    <div class="leave-stat">
+        <div class="leave-stat-label">REJECTED REQUESTS</div>
+        <div class="leave-stat-value">{{ rejected_count }}</div>
+    </div>
+
+</div>
+
+
+<!-- CREATE LEAVE REQUEST -->
+<div class="leave-panel">
+
+    <div class="leave-panel-header">
+        <div>
+            <h3>Create Leave Request</h3>
+            <div class="leave-muted mt-1">
+                Submit a request on behalf of an employee
+            </div>
+        </div>
+        <i class="bi bi-calendar-plus text-secondary"></i>
+    </div>
+
+    <div class="leave-panel-body">
+
+        {% if employees %}
+
+        <form method="POST" action="{{ url_for('create_leave_request') }}">
+
+            <div class="leave-form-grid">
+
+                <div class="leave-field">
+                    <label>Employee *</label>
+                    <select name="employee_id" required>
+                        <option value="">Select employee</option>
+                        {% for employee in employees %}
+                        <option value="{{ employee.employee_id }}">
+                            {{ employee.first_name }} {{ employee.last_name }}
+                            — {{ employee.employee_code }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="leave-field">
+                    <label>Leave Type *</label>
+                    <select name="leave_type" required>
+                        <option value="">Select leave type</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Annual Leave">Annual Leave</option>
+                        <option value="Unpaid Leave">Unpaid Leave</option>
+                        <option value="Maternity Leave">Maternity Leave</option>
+                        <option value="Paternity Leave">Paternity Leave</option>
+                    </select>
+                </div>
+
+                <div class="leave-field">
+                    <label>Start Date *</label>
+                    <input type="date" name="start_date" required>
+                </div>
+
+                <div class="leave-field">
+                    <label>End Date *</label>
+                    <input type="date" name="end_date" required>
+                </div>
+
+                <div class="leave-field full">
+                    <label>Reason</label>
+                    <textarea name="reason"
+                        placeholder="Enter the reason for leave..."></textarea>
+                </div>
+
+                <div class="leave-field full">
+                    <button type="submit" class="leave-submit">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Submit Leave Request
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        {% else %}
+        <div class="leave-empty">
+            No active employees found. Add an employee before creating a leave request.
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+
+<!-- LEAVE REQUEST WORKLIST -->
+<div class="leave-panel">
+
+    <div class="leave-panel-header">
+        <div>
+            <h3>Leave Request Worklist</h3>
+            <div class="leave-muted mt-1">
+                All submitted employee leave requests
+            </div>
+        </div>
+
+        <span class="leave-muted">
+            {{ leave_requests|length }} records
+        </span>
+    </div>
+
+    <div class="leave-table-wrap">
+
+        <table class="leave-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Decision</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for leave in leave_requests %}
+                <tr>
+                    <td>
+                        <div class="leave-employee">
+                            {{ leave.first_name }} {{ leave.last_name }}
+                        </div>
+                        <div class="leave-code">
+                            {{ leave.employee_code }} · {{ leave.department_name or 'Unassigned' }}
+                        </div>
+                    </td>
+
+                    <td>{{ leave.leave_type }}</td>
+
+                    <td>
+                        {{ leave.start_date.strftime('%d %b %Y') }}
+                        <br>
+                        <span class="leave-muted">
+                            to {{ leave.end_date.strftime('%d %b %Y') }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {{ leave.reason or '—' }}
+                    </td>
+
+                    <td>
+                        {% if leave.status == 'Pending' %}
+                            <span class="leave-status leave-pending">Pending</span>
+                        {% elif leave.status == 'Approved' %}
+                            <span class="leave-status leave-approved">Approved</span>
+                        {% else %}
+                            <span class="leave-status leave-rejected">Rejected</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if leave.status == 'Pending' %}
+                        <form method="POST"
+                              action="{{ url_for('review_leave', leave_id=leave.leave_id) }}"
+                              class="leave-decision"
+                              onsubmit="return confirm('Confirm this leave decision?');">
+
+                            <button class="leave-approve"
+                                    type="submit"
+                                    name="decision"
+                                    value="Approved">
+                                Approve
+                            </button>
+
+                            <button class="leave-reject"
+                                    type="submit"
+                                    name="decision"
+                                    value="Rejected">
+                                Reject
+                            </button>
+                        </form>
+                        {% else %}
+                            <span class="leave-muted">Reviewed</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="leave-empty">
+                            <i class="bi bi-calendar2-check fs-3 d-block mb-2"></i>
+                            No leave requests have been submitted yet.
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}

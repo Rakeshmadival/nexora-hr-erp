@@ -1,0 +1,353 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.ess-heading { margin-bottom:24px; }
+.ess-heading h1 {
+    color:#17243b; font-size:25px; font-weight:750; margin:0 0 6px;
+}
+.ess-muted { color:#8793a5; font-size:11px; }
+.ess-profile {
+    background:#fff; border:1px solid #e9edf3;
+    border-radius:12px; padding:23px; margin-bottom:20px;
+    display:flex; align-items:center; gap:18px;
+}
+.ess-avatar {
+    width:55px; height:55px; border-radius:14px;
+    display:grid; place-items:center; background:#eaf3ff;
+    color:#2675c8; font-size:23px; font-weight:750;
+}
+.ess-name { color:#17243b; font-size:19px; font-weight:750; }
+.ess-code { color:#8793a5; font-size:11px; margin-top:5px; }
+.ess-kpis {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:14px; margin-bottom:20px;
+}
+.ess-kpi,.ess-panel {
+    background:#fff; border:1px solid #e9edf3; border-radius:12px;
+}
+.ess-kpi { padding:18px; }
+.ess-kpi span { color:#8793a5; font-size:10px; font-weight:650; }
+.ess-kpi strong {
+    display:block; color:#17243b;
+    font-size:26px; font-weight:750; margin-top:8px;
+}
+.ess-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:18px; margin-bottom:20px;
+}
+.ess-panel { overflow:hidden; margin-bottom:20px; }
+.ess-panel-header {
+    padding:17px 20px; border-bottom:1px solid #edf0f5;
+}
+.ess-panel-header h3 {
+    color:#26364e; font-weight:700; font-size:13px; margin:0;
+}
+.ess-panel-body { padding:20px; }
+.ess-detail {
+    display:flex; justify-content:space-between;
+    gap:12px; padding:11px 0;
+    border-bottom:1px solid #f0f2f6; font-size:11px;
+}
+.ess-detail:last-child { border-bottom:0; }
+.ess-detail span { color:#8995a7; }
+.ess-detail strong { color:#34445c; text-align:right; }
+.ess-field label {
+    display:block; font-size:11px; color:#526178;
+    font-weight:650; margin-bottom:7px;
+}
+.ess-field input,.ess-field select,.ess-field textarea {
+    width:100%; padding:10px 11px; border:1px solid #e2e8f0;
+    border-radius:7px; color:#33445d; font-size:11px;
+    background:white; margin-bottom:14px;
+}
+.ess-field textarea { min-height:65px; resize:vertical; }
+.ess-submit {
+    background:#0875d1; color:white; border:0;
+    border-radius:7px; padding:10px 15px;
+    font-size:11px; font-weight:650;
+}
+.ess-table-wrap { overflow-x:auto; }
+.ess-table { width:100%; border-collapse:collapse; white-space:nowrap; }
+.ess-table th {
+    color:#8793a5; background:#fafbfd; padding:13px 15px;
+    font-size:10px; text-transform:uppercase; text-align:left;
+}
+.ess-table td {
+    color:#53627a; border-top:1px solid #f0f2f6;
+    padding:13px 15px; font-size:11px;
+}
+.ess-status {
+    display:inline-block; border-radius:20px;
+    padding:5px 9px; font-size:10px; font-weight:650;
+}
+.ess-pending { background:#fff4df; color:#a86a13; }
+.ess-approved { background:#e8f7ef; color:#208354; }
+.ess-rejected { background:#fff0ed; color:#c45c4d; }
+.ess-empty { padding:25px; text-align:center; color:#96a1b0; font-size:11px; }
+@media(max-width:750px) {
+    .ess-grid { grid-template-columns:1fr; }
+}
+@media(max-width:500px) {
+    .ess-kpis { grid-template-columns:1fr; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="ess-heading">
+    <div class="ess-muted mb-2">HOME / MY WORKSPACE</div>
+    <h1>My Employee Portal</h1>
+    <div class="ess-muted">
+        Your employee profile, leave requests and attendance information.
+    </div>
+</div>
+
+
+<!-- EMPLOYEE PROFILE -->
+<div class="ess-profile">
+    <div class="ess-avatar">
+        {{ employee.first_name[0]|upper }}{{ employee.last_name[0]|upper }}
+    </div>
+
+    <div>
+        <div class="ess-name">
+            {{ employee.first_name }} {{ employee.last_name }}
+        </div>
+
+        <div class="ess-code">
+            {{ employee.employee_code }} ·
+            {{ employee.designation or 'Employee' }}
+        </div>
+
+        <div class="ess-muted mt-2">
+            {{ employee.department_name or 'Unassigned Department' }}
+        </div>
+    </div>
+
+    <div class="ms-auto">
+        <span class="ess-status ess-approved">
+            {{ employee.employment_status }}
+        </span>
+    </div>
+</div>
+
+
+<!-- SUMMARY -->
+<div class="ess-kpis">
+
+    <div class="ess-kpi">
+        <span>TOTAL LEAVE REQUESTS</span>
+        <strong>{{ leave_summary.total }}</strong>
+    </div>
+
+    <div class="ess-kpi">
+        <span>PENDING REQUESTS</span>
+        <strong>{{ leave_summary.pending }}</strong>
+    </div>
+
+    <div class="ess-kpi">
+        <span>APPROVED REQUESTS</span>
+        <strong>{{ leave_summary.approved }}</strong>
+    </div>
+
+</div>
+
+
+<div class="ess-grid">
+
+    <!-- PROFILE DETAILS -->
+    <div class="ess-panel">
+
+        <div class="ess-panel-header">
+            <h3>My Employment Details</h3>
+        </div>
+
+        <div class="ess-panel-body">
+
+            <div class="ess-detail">
+                <span>Employee ID</span>
+                <strong>{{ employee.employee_code }}</strong>
+            </div>
+
+            <div class="ess-detail">
+                <span>Designation</span>
+                <strong>{{ employee.designation or '—' }}</strong>
+            </div>
+
+            <div class="ess-detail">
+                <span>Department</span>
+                <strong>{{ employee.department_name or '—' }}</strong>
+            </div>
+
+            <div class="ess-detail">
+                <span>Email</span>
+                <strong>{{ employee.email or '—' }}</strong>
+            </div>
+
+            <div class="ess-detail">
+                <span>Phone</span>
+                <strong>{{ employee.phone or '—' }}</strong>
+            </div>
+
+            <div class="ess-detail">
+                <span>Joining Date</span>
+                <strong>
+                    {{ employee.joining_date.strftime('%d %b %Y') if employee.joining_date else '—' }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LEAVE APPLICATION -->
+    <div class="ess-panel">
+
+        <div class="ess-panel-header">
+            <h3>Apply for Leave</h3>
+        </div>
+
+        <div class="ess-panel-body">
+
+            <form method="POST"
+                  action="{{ url_for('employee_apply_leave') }}">
+
+                <div class="ess-field">
+                    <label>Leave Type *</label>
+                    <select name="leave_type" required>
+                        <option value="">Select leave type</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Annual Leave">Annual Leave</option>
+                        <option value="Unpaid Leave">Unpaid Leave</option>
+                        <option value="Maternity Leave">Maternity Leave</option>
+                        <option value="Paternity Leave">Paternity Leave</option>
+                    </select>
+
+                    <label>Start Date *</label>
+                    <input type="date" name="start_date" required>
+
+                    <label>End Date *</label>
+                    <input type="date" name="end_date" required>
+
+                    <label>Reason</label>
+                    <textarea name="reason"
+                              placeholder="Briefly explain your leave request..."></textarea>
+                </div>
+
+                <button type="submit" class="ess-submit">
+                    <i class="bi bi-send me-1"></i>
+                    Submit Leave Request
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MY LEAVE HISTORY -->
+<div class="ess-panel">
+
+    <div class="ess-panel-header">
+        <h3>My Leave History</h3>
+    </div>
+
+    <div class="ess-table-wrap">
+
+        <table class="ess-table">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for leave in leave_requests %}
+                <tr>
+                    <td>{{ leave.leave_type }}</td>
+                    <td>{{ leave.start_date.strftime('%d %b %Y') }}</td>
+                    <td>{{ leave.end_date.strftime('%d %b %Y') }}</td>
+                    <td>{{ leave.reason or '—' }}</td>
+
+                    <td>
+                        {% if leave.status == 'Pending' %}
+                            <span class="ess-status ess-pending">Pending</span>
+                        {% elif leave.status == 'Approved' %}
+                            <span class="ess-status ess-approved">Approved</span>
+                        {% else %}
+                            <span class="ess-status ess-rejected">Rejected</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">
+                        <div class="ess-empty">You have not submitted any leave requests yet.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<!-- MY ATTENDANCE -->
+<div class="ess-panel">
+
+    <div class="ess-panel-header">
+        <h3>My Recent Attendance</h3>
+        <div class="ess-muted mt-1">Latest 10 attendance records</div>
+    </div>
+
+    <div class="ess-table-wrap">
+
+        <table class="ess-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.attendance_date.strftime('%d %b %Y') }}</td>
+                    <td>{{ record.check_in or '—' }}</td>
+                    <td>{{ record.check_out or '—' }}</td>
+                    <td>{{ record.attendance_status }}</td>
+                    <td>{{ record.remarks or '—' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">
+                        <div class="ess-empty">No attendance records available.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
